@@ -6,13 +6,13 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
  *
  */
-namespace Piwik\Plugins\TrafficSources;
+namespace Piwik\Plugins\TrafficSourcesProgression;
 
 use Piwik\WidgetsList;
 
 /**
  */
-class TrafficSources extends \Piwik\Plugin
+class TrafficSourcesProgression extends \Piwik\Plugin
 {
     /**
      * @see Piwik\Plugin::getListHooksRegistered
@@ -28,12 +28,13 @@ class TrafficSources extends \Piwik\Plugin
 
     public function getJsFiles(&$jsFiles)
     {
-        $jsFiles[] = 'plugins/TrafficSources/javascripts/trafficsources.js';
+        $jsFiles[] = 'plugins/TrafficSourcesProgression/javascripts/jquery.flot.js';
+        $jsFiles[] = 'plugins/TrafficSourcesProgression/javascripts/trafficsources.js';
     }
 
     public function getStylesheetFiles(&$stylesheets)
     {
-        $stylesheets[] = "plugins/TrafficSources/stylesheets/trafficsources.css";
+        $stylesheets[] = "plugins/TrafficSourcesProgression/stylesheets/trafficsources.css";
     }
 
     /**
@@ -41,7 +42,7 @@ class TrafficSources extends \Piwik\Plugin
      */
     public function addWidget()
     {
-        WidgetsList::add( 'Live!', 'TrafficSources_WidgetName', 'TrafficSources', 'index');
+        WidgetsList::add( 'Live!', 'TrafficSourcesProgression_WidgetName', 'TrafficSourcesProgression', 'index');
     }
 
 }

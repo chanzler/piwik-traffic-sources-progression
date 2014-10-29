@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
  *
  */
-namespace Piwik\Plugins\TrafficSources;
+namespace Piwik\Plugins\TrafficSourcesProgression;
 
 use Piwik\View;
 use Piwik\Piwik;
@@ -30,9 +30,9 @@ class Controller extends \Piwik\Plugin\Controller
 
     public function index()
     {
-		$settings = new Settings('TrafficSources');
+		$settings = new Settings('TrafficSourcesProgression');
 
-        $view = new View('@TrafficSources/index.twig');
+        $view = new View('@TrafficSourcesProgression/index.twig');
         $this->setBasicVariablesView($view);
         $view->idSite = $this->idSite;
         $view->refreshInterval = (int)$settings->refreshInterval->getValue();

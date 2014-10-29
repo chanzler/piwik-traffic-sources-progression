@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
  *
  */
-namespace Piwik\Plugins\TrafficSources;
+namespace Piwik\Plugins\TrafficSourcesProgression;
 
 use Piwik\Piwik;
 use Piwik\API\Request;
@@ -61,7 +61,7 @@ class API extends \Piwik\Plugin\API {
      * @param int $lastDays
      * @return int
      */
-    public static function getTrafficSources($idSite, $lastMinutes=20)
+    public static function getTrafficSourcesProgression($idSite, $lastMinutes=20)
     {
         \Piwik\Piwik::checkUserHasViewAccess($idSite);
 		$timeZoneDiff = API::get_timezone_offset('UTC', Site::getTimezoneFor($idSite));
@@ -147,20 +147,14 @@ class API extends \Piwik\Plugin\API {
         }
 */
         $totalVisits = (int)$direct+$search+$campaign+$website;
-        return array(
+/*        return array(
         	array('id'=>1, 'name'=>Piwik::translate('TrafficSources_Direct'), 'value'=>$direct, 'percentage'=>($totalVisits==0)?0:round($direct/$totalVisits*100,1)),
         	array('id'=>2, 'name'=>Piwik::translate('TrafficSources_Search'), 'value'=>$search, 'percentage'=>($totalVisits==0)?0:round($search/$totalVisits*100,1)),
         	array('id'=>3, 'name'=>Piwik::translate('TrafficSources_Campaign'), 'value'=>$campaign, 'percentage'=>($totalVisits==0)?0:round($campaign/$totalVisits*100,1)),
         	array('id'=>4, 'name'=>Piwik::translate('TrafficSources_Links'), 'value'=>$website, 'percentage'=>($totalVisits==0)?0:round(($website-$socialCount)/$totalVisits*100,1)), //subtract socials
         	array('id'=>5, 'name'=>Piwik::translate('TrafficSources_Social'), 'value'=>$socialCount, 'percentage'=>($totalVisits==0)?0:round($socialCount/$totalVisits*100,1))
-        );
-/*        return array(
-        	array('id'=>1, 'name'=>Piwik::translate('TrafficSources_Direct'), 'value'=>(int)68, 'percentage'=>68),
-        	array('id'=>2, 'name'=>Piwik::translate('TrafficSources_Search'), 'value'=>(int)20, 'percentage'=>20),
-        	array('id'=>3, 'name'=>Piwik::translate('TrafficSources_Campaign'), 'value'=>(int)2, 'percentage'=>3),
-        	array('id'=>4, 'name'=>Piwik::translate('TrafficSources_Links'), 'value'=>(int)80-(int)3, 'percentage'=>73), //subtract socials
-        	array('id'=>5, 'name'=>Piwik::translate('TrafficSources_Social'), 'value'=>(int)32, 'percentage'=>32)
         );*/
+		$out = array('label'=>'Label', 'data'=>array([1999, 3.0], [2000, 3.9], [2001, 2.0], [2002, 1.2], [2003, 1.3], [2004, 2.5], [2005, 2.0], [2006, 3.1], [2007, 2.9], [2008, 0.9]));
+		return json_encode($out);
     }
-
 }

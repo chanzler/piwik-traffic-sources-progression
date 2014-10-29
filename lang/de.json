@@ -1,11 +1,11 @@
 {
-    "TrafficSources": {
+    "TrafficSourcesProgression": {
         "SettingsIntroduction": "Hier können Sie das Verhalten des Plugins konfigurieren.",
         "SettingsRefreshInterval": "Aktualisierungsintervall",
         "SettingsRefreshIntervalDescription": "Legt fest, in welchem Zeitabstand in Sekunden das Widget aktualisiert wird.",
         "SettingsRefreshIntervalHelp": "Geben Sie eine Zahl >= 1 an",
-        "Description": "Zeigt eine Übersicht der aktuellen Trafficquellen",
-        "WidgetName": "Trafficquellen",
+        "Description": "Zeigt die Entwicklung der Trafficquellen",
+        "WidgetName": "Trafficquellen Entwicklung",
         "Direct": "Direkt",
         "Search": "Suche",
         "Links": "Links",
