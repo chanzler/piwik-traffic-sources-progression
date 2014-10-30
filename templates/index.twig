@@ -31,15 +31,21 @@
         }, 'get');
         ajaxRequest.setFormat('json');
         ajaxRequest.setCallback(function (series) {
-			var firstcoordinate = "(" + series.data[0][0] + ", " + series.data[0][1] + ")";
-			$("#textspan").text("Fetched " + series.label + ", first point: " + firstcoordinate);
+			//var firstcoordinate = "(" + series.data[0][0] + ", " + series.data[0][1] + ")";
+			//$("#textspan").text("Fetched " + series.label + ", first point: " + firstcoordinate);
 			// Push the new data onto our existing data array
+        	$.each( series, function( index, value ){
+				if (!alreadyFetched[value.label]) {
+					alreadyFetched[value.label] = true;
+					//data = [ series ];
+					data.push(value);
+				}
+			});
 			if (!alreadyFetched[series.label]) {
 				alreadyFetched[series.label] = true;
 				//data = [ series ];
 				data.push(series);
 			}
-console.log(data);
 			$.plot("#placeholder", data, options);        
 		});
         

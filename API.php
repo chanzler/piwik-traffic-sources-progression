@@ -21,7 +21,7 @@ use Piwik\Common;
  */
 class API extends \Piwik\Plugin\API {
 
-	private static function isSocialUrl($url, $socialName = false)
+	public static function isSocialUrl($url, $socialName = false)
 	{
 		foreach (Common::getSocialUrls() as $domain => $name) {
 	
@@ -34,7 +34,7 @@ class API extends \Piwik\Plugin\API {
 		return false;
 	}
 	
-	private static function get_timezone_offset($remote_tz, $origin_tz = null) {
+	public static function get_timezone_offset($remote_tz, $origin_tz = null) {
     		if($origin_tz === null) {
         		if(!is_string($origin_tz = date_default_timezone_get())) {
             			return false; // A UTC timestamp was returned -- bail out!
@@ -154,7 +154,24 @@ class API extends \Piwik\Plugin\API {
         	array('id'=>4, 'name'=>Piwik::translate('TrafficSources_Links'), 'value'=>$website, 'percentage'=>($totalVisits==0)?0:round(($website-$socialCount)/$totalVisits*100,1)), //subtract socials
         	array('id'=>5, 'name'=>Piwik::translate('TrafficSources_Social'), 'value'=>$socialCount, 'percentage'=>($totalVisits==0)?0:round($socialCount/$totalVisits*100,1))
         );*/
-		$out = array('label'=>'Label', 'data'=>array([1999, 3.0], [2000, 3.9], [2001, 2.0], [2002, 1.2], [2003, 1.3], [2004, 2.5], [2005, 2.0], [2006, 3.1], [2007, 2.9], [2008, 0.9]));
+		$out = array(
+					'test'=>array('label'=>'Label', 'data'=>array([1999, 3.0], [2000, 3.9], [2001, 2.0], [2002, 1.2], [2003, 1.3], [2004, 2.5], [2005, 2.0], [2006, 3.1], [2007, 2.9], [2008, 0.9]))
+				);
 		return json_encode($out);
+    }
+
+    public static function getSites()
+    {
+        $idSites = array();
+        $sites = Request::processRequest('SitesManager.getSitesWithAtLeastViewAccess');
+        if (!empty($sites)) {
+            foreach ($sites as $site) {
+                $idSites[] = array(
+                	"id" => $site['idsite'],
+			"name" =>  $site['name']
+		);
+            }
+        }
+        return $idSites;
     }
 }
