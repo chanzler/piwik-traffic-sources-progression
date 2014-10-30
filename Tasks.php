@@ -18,7 +18,7 @@ class Tasks extends \Piwik\Plugin\Tasks
         $this->hourly('getTrafficSources');  // method will be executed once every hour
     }
 
-    public function getTrafficSources()
+    public static function getTrafficSources()
     {
        	foreach (API::getSites() as $site)
         {
@@ -40,9 +40,9 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        ));
 	        foreach ($direct as &$value) {
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?)";
+		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 				\Piwik\Db::query($insert, array(
-		            $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot'], $value['number']
+		            $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']*1200, $value['number']
 				));
         	}
 		}
