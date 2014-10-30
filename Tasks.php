@@ -39,7 +39,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        $direct = \Piwik\Db::fetchAll($directSql, array(
 	            $idSite, $lastMinutes * 60
 	        ));
-	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND referer_type = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_DIRECT_ENTRY));
+	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_DIRECT_ENTRY));
 	        foreach ($direct as &$value) {
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
@@ -59,7 +59,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        $search = \Piwik\Db::fetchAll($searchSql, array(
 	            $idSite, $lastMinutes * 60
 	        ));
-	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND referer_type = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_SEARCH_ENGINE));
+	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_SEARCH_ENGINE));
 	        foreach ($search as &$value) {
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";

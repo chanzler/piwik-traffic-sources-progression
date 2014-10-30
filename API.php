@@ -83,87 +83,23 @@ class API extends \Piwik\Plugin\API {
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";
 		
-        $searchSql = "SELECT COUNT(*)
-                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+        $searchSql = "SELECT *
+                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-                AND referer_type = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
+                AND source_id = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
                 ";
-        $search = \Piwik\Db::fetchOne($searchSql, array(
-            $idSite, $lastMinutes+($timeZoneDiff/60)
+        $search = \Piwik\Db::fetchAll($searchSql, array(
+            $idSite
         ));
+		$searchString = "\"".Piwik::translate('TrafficSources_Search')."\":{\"label\":\"".Piwik::translate('TrafficSources_Search')."\", \"data\":[";
+        foreach ($search as &$value) {
+			$searchString .= "[".$value['timeslot'].", ".$value['traffic']."],";
+		}
+		$searchString = rtrim($searchString, ",");
+		$searchString .= "]}";
 
-        $campaignSql = "SELECT COUNT(*)
-                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-                WHERE idsite = ?
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-                AND referer_type = ".Common::REFERRER_TYPE_CAMPAIGN."
-                ";
-        $campaign = \Piwik\Db::fetchOne($campaignSql, array(
-        		$idSite, $lastMinutes+($timeZoneDiff/60)
-        ));
-        
-        $websiteSql = "SELECT COUNT(*)
-                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-                WHERE idsite = ?
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
-                ";
-        $website = \Piwik\Db::fetchOne($websiteSql, array(
-        		$idSite, $lastMinutes+($timeZoneDiff/60)
-        ));
 
-        $socialSql = "SELECT referer_url
-                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-                WHERE idsite = ?
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
-                ";
-                
-        $social = \Piwik\Db::fetchAll($socialSql, array(
-        		$idSite, $lastMinutes+($timeZoneDiff/60)
-        ));
-        $socialCount = 0;
-        foreach ($social as &$value) {
-        	if(API::isSocialUrl($value['referer_url'])) $socialCount++;
-        }
-
-/*        $sql = "SELECT referer_url, referer_type
-                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-                WHERE idsite = ?
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-                AND referer_type IN (".Common::REFERRER_TYPE_WEBSITE.",	".Common::REFERRER_TYPE_CAMPAIGN.",	".Common::REFERRER_TYPE_SEARCH_ENGINE.",".Common::REFERRER_TYPE_DIRECT_ENTRY.")
-                ";
-                
-        $result = \Piwik\Db::fetchAll($sql, array(
-        		$idSite, $lastMinutes+($timeZoneDiff/60)
-        ));
-        $socialCount = 0;
-        $direct = 0;
-        $search = 0;
-        $campaign = 0;
-        $website = 0;
-        foreach ($result as &$value) {
-        	if (API::isSocialUrl($value['referer_url'])) $socialCount++;
-        	if ($value['referer_type'] == Common::REFERRER_TYPE_WEBSITE) $website++;
-        	if ($value['referer_type'] == Common::REFERRER_TYPE_CAMPAIGN) $campaign++;
-           	if ($value['referer_type'] == Common::REFERRER_TYPE_SEARCH_ENGINE) $search++;
-           	if ($value['referer_type'] == Common::REFERRER_TYPE_DIRECT_ENTRY) $direct++;
-        }
-*/
-        $totalVisits = (int)$direct+$search+$campaign+$website;
-/*        return array(
-        	array('id'=>1, 'name'=>Piwik::translate('TrafficSources_Direct'), 'value'=>$direct, 'percentage'=>($totalVisits==0)?0:round($direct/$totalVisits*100,1)),
-        	array('id'=>2, 'name'=>Piwik::translate('TrafficSources_Search'), 'value'=>$search, 'percentage'=>($totalVisits==0)?0:round($search/$totalVisits*100,1)),
-        	array('id'=>3, 'name'=>Piwik::translate('TrafficSources_Campaign'), 'value'=>$campaign, 'percentage'=>($totalVisits==0)?0:round($campaign/$totalVisits*100,1)),
-        	array('id'=>4, 'name'=>Piwik::translate('TrafficSources_Links'), 'value'=>$website, 'percentage'=>($totalVisits==0)?0:round(($website-$socialCount)/$totalVisits*100,1)), //subtract socials
-        	array('id'=>5, 'name'=>Piwik::translate('TrafficSources_Social'), 'value'=>$socialCount, 'percentage'=>($totalVisits==0)?0:round($socialCount/$totalVisits*100,1))
-        );*/
-//		$out = array(
-//					'test'=>array('label'=>'Label', 'data'=>array(['1999, 3.0'], [2000, 3.9], [2001, 2.0], [2002, 1.2], [2003, 1.3], [2004, 2.5], [2005, 2.0], [2006, 3.1], [2007, 2.9], [2008, 0.9]))
-//				);
-//		return json_encode($out);
-		$out = "{".$directString."}";
+		$out = "{".$directString.",".$searchString."}";
 		return $out;
     }
 
