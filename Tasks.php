@@ -28,6 +28,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 			$origin_dtz = new \DateTimeZone(Site::getTimezoneFor($idSite));
 			$origin_dt = new \DateTime("now", $origin_dtz);
 			$refTime = $origin_dt->format('Y-m-d H:i:s');
+	        //direct traffic
 	        $directSql = "SELECT COUNT(*) AS number, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
 	                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 	                WHERE idsite = ?
@@ -38,6 +39,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        $direct = \Piwik\Db::fetchAll($directSql, array(
 	            $idSite, $lastMinutes * 60
 	        ));
+	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND referer_type = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_DIRECT_ENTRY));
 	        foreach ($direct as &$value) {
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
@@ -45,6 +47,27 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']*1200, $value['number']
 				));
         	}
+
+	        //search traffic
+	        $searchSql = "SELECT COUNT(*) AS number, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
+	                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+	                WHERE idsite = ?
+	                AND DATE_SUB('".$refTime."', INTERVAL 1 DAY) < visit_last_action_time
+	                AND referer_type = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
+	                GROUP BY  round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
+	                ";
+	        $search = \Piwik\Db::fetchAll($searchSql, array(
+	            $idSite, $lastMinutes * 60
+	        ));
+	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND referer_type = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_SEARCH_ENGINE));
+	        foreach ($search as &$value) {
+				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
+				\Piwik\Db::query($insert, array(
+		            $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot']*1200, $value['number']
+				));
+        	}
+
 		}
     }
 

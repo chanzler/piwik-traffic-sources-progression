@@ -68,16 +68,21 @@ class API extends \Piwik\Plugin\API {
 		$origin_dtz = new \DateTimeZone(Site::getTimezoneFor($idSite));
 		$origin_dt = new \DateTime("now", $origin_dtz);
 		$refTime = $origin_dt->format('Y-m-d H:i:s');
-        $directSql = "SELECT COUNT(*)
-                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+        $directSql = "SELECT *
+                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-                AND referer_type = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
+                AND source_id = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
                 ";
-        $direct = \Piwik\Db::fetchOne($directSql, array(
-            $idSite, $lastMinutes+($timeZoneDiff/60)
+        $direct = \Piwik\Db::fetchAll($directSql, array(
+            $idSite
         ));
-
+		$directString = "\"".Piwik::translate('TrafficSources_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSources_Direct')."\", \"data\":[";
+        foreach ($direct as &$value) {
+			$directString .= "[".$value['timeslot'].", ".$value['traffic']."],";
+		}
+		$directString = rtrim($directString, ",");
+		$directString .= "]}";
+		
         $searchSql = "SELECT COUNT(*)
                 FROM " . \Piwik\Common::prefixTable("log_visit") . "
                 WHERE idsite = ?
@@ -154,10 +159,12 @@ class API extends \Piwik\Plugin\API {
         	array('id'=>4, 'name'=>Piwik::translate('TrafficSources_Links'), 'value'=>$website, 'percentage'=>($totalVisits==0)?0:round(($website-$socialCount)/$totalVisits*100,1)), //subtract socials
         	array('id'=>5, 'name'=>Piwik::translate('TrafficSources_Social'), 'value'=>$socialCount, 'percentage'=>($totalVisits==0)?0:round($socialCount/$totalVisits*100,1))
         );*/
-		$out = array(
-					'test'=>array('label'=>'Label', 'data'=>array([1999, 3.0], [2000, 3.9], [2001, 2.0], [2002, 1.2], [2003, 1.3], [2004, 2.5], [2005, 2.0], [2006, 3.1], [2007, 2.9], [2008, 0.9]))
-				);
-		return json_encode($out);
+//		$out = array(
+//					'test'=>array('label'=>'Label', 'data'=>array(['1999, 3.0'], [2000, 3.9], [2001, 2.0], [2002, 1.2], [2003, 1.3], [2004, 2.5], [2005, 2.0], [2006, 3.1], [2007, 2.9], [2008, 0.9]))
+//				);
+//		return json_encode($out);
+		$out = "{".$directString."}";
+		return $out;
     }
 
     public static function getSites()
