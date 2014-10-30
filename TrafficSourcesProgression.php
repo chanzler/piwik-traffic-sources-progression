@@ -9,6 +9,7 @@
 namespace Piwik\Plugins\TrafficSourcesProgression;
 
 use Piwik\WidgetsList;
+use Piwik\Common;
 
 /**
  */
