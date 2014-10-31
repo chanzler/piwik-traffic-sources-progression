@@ -117,7 +117,7 @@ class API extends \Piwik\Plugin\API {
 		$searchString .= "]}";
 
 
-		$out = "{".$directString.",".$searchString."}";
+		$out = "{".$searchString.",".$directString.",".$campaignString."}";
 		return $out;
     }
 
