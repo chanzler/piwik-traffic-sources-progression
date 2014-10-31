@@ -68,6 +68,22 @@ class API extends \Piwik\Plugin\API {
 		$origin_dtz = new \DateTimeZone(Site::getTimezoneFor($idSite));
 		$origin_dt = new \DateTime("now", $origin_dtz);
 		$refTime = $origin_dt->format('Y-m-d H:i:s');
+        $campaignSql = "SELECT *
+                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+                WHERE idsite = ?
+                AND source_id = ".Common::REFERRER_TYPE_CAMPAIGN."
+                ORDER BY timeslot ASC
+                ";
+        $campaign = \Piwik\Db::fetchAll($campaignSql, array(
+            $idSite
+        ));
+		$campaignString = "\"".Piwik::translate('TrafficSources_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSources_Campaign')."\", \"data\":[";
+        foreach ($campaign as &$value) {
+			$campaignString .= "[".$value['timeslot'].", ".$value['traffic']."],";
+		}
+		$campaignString = rtrim($campaignString, ",");
+		$campaignString .= "]}";
+
         $directSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
@@ -78,8 +94,8 @@ class API extends \Piwik\Plugin\API {
             $idSite
         ));
 		$directString = "\"".Piwik::translate('TrafficSources_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSources_Direct')."\", \"data\":[";
-        foreach ($direct as &$value) {
-			$directString .= "[".$value['timeslot'].", ".$value['traffic']."],";
+        foreach ($direct as $key=>&$value) {
+			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
 		}
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";
@@ -94,8 +110,8 @@ class API extends \Piwik\Plugin\API {
             $idSite
         ));
 		$searchString = "\"".Piwik::translate('TrafficSources_Search')."\":{\"label\":\"".Piwik::translate('TrafficSources_Search')."\", \"data\":[";
-        foreach ($search as &$value) {
-			$searchString .= "[".$value['timeslot'].", ".$value['traffic']."],";
+        foreach ($search as $key=>&$value) {
+			$searchString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
 		}
 		$searchString = rtrim($searchString, ",");
 		$searchString .= "]}";
