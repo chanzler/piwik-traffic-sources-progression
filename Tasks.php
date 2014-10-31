@@ -40,11 +40,18 @@ class Tasks extends \Piwik\Plugin\Tasks
 	            $idSite, $lastMinutes * 60
 	        ));
 	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_DIRECT_ENTRY));
-	        foreach ($direct as &$value) {
+	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 				\Piwik\Db::query($insert, array(
-		            $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot'], $value['number']
+		            $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $i, 0
+				));
+	        }
+	        foreach ($direct as &$value) {
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+		                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				\Piwik\Db::query($insert, array(
+		            $value['number'], $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']
 				));
         	}
 
@@ -60,11 +67,18 @@ class Tasks extends \Piwik\Plugin\Tasks
 	            $idSite, $lastMinutes * 60
 	        ));
 	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, Common::REFERRER_TYPE_SEARCH_ENGINE));
-	        foreach ($search as &$value) {
+	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 				\Piwik\Db::query($insert, array(
-		            $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot'], $value['number']
+		            $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $i, 0
+				));
+	        }
+	        foreach ($search as &$value) {
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+		                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				\Piwik\Db::query($insert, array(
+		            $value['number'], $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot']
 				));
         	}
 
