@@ -44,7 +44,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 				\Piwik\Db::query($insert, array(
-		            $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']*1200, $value['number']
+		            $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot'], $value['number']
 				));
         	}
 
@@ -64,7 +64,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 				\Piwik\Db::query($insert, array(
-		            $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot']*1200, $value['number']
+		            $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot'], $value['number']
 				));
         	}
 
