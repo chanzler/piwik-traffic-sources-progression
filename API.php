@@ -72,6 +72,7 @@ class API extends \Piwik\Plugin\API {
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
+                ORDER BY timeslot ASC
                 ";
         $direct = \Piwik\Db::fetchAll($directSql, array(
             $idSite
@@ -87,6 +88,7 @@ class API extends \Piwik\Plugin\API {
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
+                ORDER BY timeslot ASC
                 ";
         $search = \Piwik\Db::fetchAll($searchSql, array(
             $idSite

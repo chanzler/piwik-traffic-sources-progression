@@ -15,10 +15,10 @@ class Tasks extends \Piwik\Plugin\Tasks
 {
     public function schedule()
     {
-        $this->hourly('getTrafficSources');  // method will be executed once every hour
+        $this->hourly('getTrafficSourcesTask');  // method will be executed once every hour
     }
 
-    public static function getTrafficSources()
+    function getTrafficSourcesTask()
     {
        	foreach (API::getSites() as $site)
         {
@@ -34,7 +34,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 	                WHERE idsite = ?
 	                AND DATE_SUB('".$refTime."', INTERVAL 1 DAY) < visit_last_action_time
 	                AND referer_type = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
-	                GROUP BY  round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
+	                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
 	                ";
 	        $direct = \Piwik\Db::fetchAll($directSql, array(
 	            $idSite, $lastMinutes * 60
@@ -54,7 +54,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 	                WHERE idsite = ?
 	                AND DATE_SUB('".$refTime."', INTERVAL 1 DAY) < visit_last_action_time
 	                AND referer_type = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
-	                GROUP BY  round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
+	                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
 	                ";
 	        $search = \Piwik\Db::fetchAll($searchSql, array(
 	            $idSite, $lastMinutes * 60

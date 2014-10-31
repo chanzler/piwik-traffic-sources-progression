@@ -62,7 +62,7 @@ class TrafficSourcesProgression extends \Piwik\Plugin
                 throw $e;
             }
         }
-		Tasks::getTrafficSources();
+		Tasks::getTrafficSourcesTask();
     }
 
     public function uninstall()
