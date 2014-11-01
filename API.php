@@ -116,8 +116,23 @@ class API extends \Piwik\Plugin\API {
 		$searchString = rtrim($searchString, ",");
 		$searchString .= "]}";
 
+        $websiteSql = "SELECT *
+                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+                WHERE idsite = ?
+                AND source_id = ".Common::REFERRER_TYPE_WEBSITE."
+                ORDER BY timeslot ASC
+                ";
+        $website = \Piwik\Db::fetchAll($websiteSql, array(
+            $idSite
+        ));
+		$websiteString = "\"".Piwik::translate('TrafficSources_Website')."\":{\"label\":\"".Piwik::translate('TrafficSources_Website')."\", \"data\":[";
+        foreach ($website as $key=>&$value) {
+			$websiteString .= "[".$value['timeslot'].", ".($value['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
+		}
+		$websiteString = rtrim($websiteString, ",");
+		$websiteString .= "]}";
 
-		$out = "{".$searchString.",".$directString.",".$campaignString."}";
+		$out = "{".$websiteString.",".$searchString.",".$directString.",".$campaignString."}";
 		return $out;
     }
 
