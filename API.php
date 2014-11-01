@@ -125,7 +125,7 @@ class API extends \Piwik\Plugin\API {
         $website = \Piwik\Db::fetchAll($websiteSql, array(
             $idSite
         ));
-		$websiteString = "\"".Piwik::translate('TrafficSources_Website')."\":{\"label\":\"".Piwik::translate('TrafficSources_Website')."\", \"data\":[";
+		$websiteString = "\"".Piwik::translate('TrafficSources_Links')."\":{\"label\":\"".Piwik::translate('TrafficSources_Links')."\", \"data\":[";
         foreach ($website as $key=>&$value) {
 			$websiteString .= "[".$value['timeslot'].", ".($value['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
 		}
