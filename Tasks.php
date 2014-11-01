@@ -77,17 +77,17 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            $idSite, 10, $i, 0
 				));
 	        }
-	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
+	        /*for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
 		        $socialCount = 0;
 	            foreach ($social as &$value) {
-	        		if(API::isSocialUrl($value['referer_url']) && $i == $value['timeslot']) $socialCount++;
+	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
 		        }
 				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 			               SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
 				\Piwik\Db::query($insert, array(
 			           $socialCount, $idSite, 10, $i
 				));
-		    }
+		    }*/
 		}
     }
 }
