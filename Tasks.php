@@ -69,7 +69,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        $social = \Piwik\Db::fetchAll($socialSql, array(
 	        		$idSite, ($lastMinutes*$i)+($timeZoneDiff/60), ($lastMinutes*72)+($timeZoneDiff/60)+$lastMinutes
 	        ));
-	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = 10", "", 100000, array($idSite, $source));
+	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
 	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
@@ -77,7 +77,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            $idSite, 10, $i, 0
 				));
 	        }
-	        /*for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
+	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
 		        $socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
@@ -87,7 +87,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 				\Piwik\Db::query($insert, array(
 			           $socialCount, $idSite, 10, $i
 				));
-		    }*/
+		    }
 		}
     }
 }
