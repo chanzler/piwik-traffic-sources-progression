@@ -58,7 +58,36 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        	}
 	        }
 
+			$socialSql = "SELECT referer_url, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
+                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+                WHERE idsite = ?
+                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
+                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) > visit_last_action_time
+                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
+            ";
+                
+	        $social = \Piwik\Db::fetchAll($socialSql, array(
+	        		$idSite, ($lastMinutes*$i)+($timeZoneDiff/60), ($lastMinutes*72)+($timeZoneDiff/60)+$lastMinutes
+	        ));
+	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = 10", "", 100000, array($idSite, $source));
+	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
+				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
+				\Piwik\Db::query($insert, array(
+		            $idSite, 10, $i, 0
+				));
+	        }
+	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
+		        $socialCount = 0;
+	            foreach ($social as &$value) {
+	        		if(API::isSocialUrl($value['referer_url']) && $i == $value['timeslot']) $socialCount++;
+		        }
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+			               SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				\Piwik\Db::query($insert, array(
+			           $socialCount, $idSite, 10, $i
+				));
+		    }
 		}
     }
-
 }
