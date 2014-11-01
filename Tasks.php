@@ -18,7 +18,7 @@ class Tasks extends \Piwik\Plugin\Tasks
         $this->hourly('getTrafficSourcesTask');  // method will be executed once every hour
     }
 
-    function getTrafficSourcesTask()
+    public function getTrafficSourcesTask()
     {
        	foreach (API::getSites() as $site)
         {
