@@ -148,7 +148,7 @@ class API extends \Piwik\Plugin\API {
 		$socialString = rtrim($socialString, ",");
 		$socialString .= "]}";
 
-		$out = "{".$websiteString.",".$searchString.",".$directString.",".$socialString.",".$campaignString."}";
+		$out = "{".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$socialString.",".$campaignString."}";
 		return $out;
     }
 
