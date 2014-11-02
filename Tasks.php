@@ -77,8 +77,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            $idSite, 10, $i, 0
 				));
 	        }
-			$offset = $timeZoneDiff;
-	        for($i=(round((time()+$offset)/1200)-72); $i<round((time()+offset)/1200); $i++){
+	        for($i=(round((time()+$timeZoneDiff)/1200)-72); $i<round((time()+$timeZoneDiff)/1200); $i++){
 		        $socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
