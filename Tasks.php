@@ -42,7 +42,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            $idSite, $lastMinutes * 60
 		        ));
 		        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
-		        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
+		        for($i=(round(time()/1200)-71); $i<=round(time()/1200); $i++){
 					$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 			                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 					\Piwik\Db::query($insert, array(
