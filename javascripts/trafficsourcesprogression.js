@@ -18,7 +18,7 @@ $(function() {
 			xaxis: {
 				tickDecimals: 0,
 				tickSize: 0,
-				show:false
+				show: true
 			},
 			yaxis: {
             	autoscaleMargin: 0.2
@@ -41,15 +41,10 @@ $(function() {
 	        	$.each( series, function( index, value ){
 					if (!alreadyFetched[value.label]) {
 						alreadyFetched[value.label] = true;
-						//data = [ series ];
 						data.push(value);
 					}
 				});
-				if (!alreadyFetched[series.label]) {
-					alreadyFetched[series.label] = true;
-					//data = [ series ];
-					data.push(series);
-				}
+	        	options.xaxis.ticks = [[data[0].data[0][0],"0"],[data[0].data[18][0],"6"],[data[0].data[36][0],"12"],[data[0].data[54][0],"18"],[data[0].data[71][0],"24"]];
 				$.plot("#tsp-placeholder", data, options);
 			});
 	        
@@ -75,16 +70,11 @@ $(function() {
 	        	$.each( series, function( index, value ){
 					if (!alreadyFetched[value.label]) {
 						alreadyFetched[value.label] = true;
-						//data = [ series ];
 						data.push(value);
 					}
 				});
-				if (!alreadyFetched[series.label]) {
-					alreadyFetched[series.label] = true;
-					//data = [ series ];
-					data.push(series);
-				}
-				$.plot("#tsp-placeholder", data, options);
+	        	options.xaxis.ticks = [[data[0].data[0][0],"0"],[data[0].data[18][0],"6"],[data[0].data[36][0],"12"],[data[0].data[54][0],"18"],[data[0].data[71][0],"24"]];
+	        	$.plot("#tsp-placeholder", data, options);
 			});
 	        
 	        ajaxRequest.send(true);
