@@ -7,23 +7,7 @@
 
 $(function() {
 
-		var plot = $.plot("#tsp-placeholder", [ [[0, 0], [1, 1]] ], {
-			lines: {
-				show: true,
-				fill: 1 
-			},
-			points: {
-				show: false
-			},
-			xaxis: {
-				tickDecimals: 0,
-				tickSize: 0,
-				show:false
-			},
-			yaxis: {
-            	autoscaleMargin: 0.2
-            }
-		});
+		var plot;
 
 	    var updateTrafficSourcesProgression = function (updateInterval) {
 		//function update(updateInterval) {
@@ -57,7 +41,7 @@ $(function() {
 			});
 	        
 	        ajaxRequest.send(true);
-			setTimeout(function() { updateTrafficSourcesProgression(updateInterval); }, updateInterval);
+			setTimeout(function() { updateTrafficSourcesProgression(updateInterval); }, updateInterval * 1000);
 		}
 		
 	    var exports = require("piwik/TrafficSourcesProgression");
@@ -87,13 +71,32 @@ $(function() {
 					//data = [ series ];
 					data.push(series);
 				}
-				plot.setData(data);
+				plot = $.plot("#tsp-placeholder", data, {
+					lines: {
+						show: true,
+						fill: 1 
+					},
+					points: {
+						show: false
+					},
+					xaxis: {
+						tickDecimals: 0,
+						tickSize: 0,
+						show:false
+					},
+					yaxis: {
+		            	autoscaleMargin: 0.2
+		            }
+				});
+
+				//plot.setData(data);
 				// Since the axes don't change, we don't need to call plot.setupGrid()
-				plot.draw();
+				//plot.setupGrid();
+				//plot.draw();
 			});
 	        
 	        ajaxRequest.send(true);
-			setTimeout(function() { updateTrafficSourcesProgression(updateInterval); }, updateInterval);
+			setTimeout(function() { updateTrafficSourcesProgression(updateInterval); }, updateInterval * 1000);
 		}
 
 	});
