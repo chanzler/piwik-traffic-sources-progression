@@ -58,7 +58,7 @@ $(function() {
 			});
 	        
 	        ajaxRequest.send(true);
-			setTimeout(update(updateInterval), updateInterval);
+			setTimeout(function() { update(updateInterval); }, updateInterval);
 		}
 
 	});
