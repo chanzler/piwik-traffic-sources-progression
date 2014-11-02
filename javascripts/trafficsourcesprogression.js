@@ -26,7 +26,7 @@ $(function() {
 		});
 
 	    var exports = require("piwik/TrafficSourcesProgression");
-	    exports.update = function (refreshInterval) {
+	    exports.update = function (updateInterval) {
 		//function update(updateInterval) {
 			var alreadyFetched = {};
 	        var data = [];
