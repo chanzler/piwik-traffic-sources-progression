@@ -25,7 +25,9 @@ $(function() {
             }
 		});
 
-		function update(updateInterval) {
+	    var exports = require("piwik/TrafficSourcesProgression");
+	    exports.update = function (refreshInterval) {
+		//function update(updateInterval) {
 			var alreadyFetched = {};
 	        var data = [];
 	        var ajaxRequest = new ajaxHelper();
