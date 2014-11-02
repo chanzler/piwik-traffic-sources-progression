@@ -25,8 +25,7 @@ $(function() {
             }
 		});
 
-	    var exports = require("piwik/TrafficSourcesProgression");
-	    exports.update = function (updateInterval) {
+	    var updateTrafficSourcesProgression = function (updateInterval) {
 		//function update(updateInterval) {
 			var alreadyFetched = {};
 	        var data = [];
@@ -58,7 +57,43 @@ $(function() {
 			});
 	        
 	        ajaxRequest.send(true);
-			setTimeout(function() { update(updateInterval); }, updateInterval);
+			setTimeout(function() { updateTrafficSourcesProgression(updateInterval); }, updateInterval);
+		}
+		
+	    var exports = require("piwik/TrafficSourcesProgression");
+	    exports.initTrafficSourcesProgression = function (updateInterval) {
+		//function update(updateInterval) {
+			var alreadyFetched = {};
+	        var data = [];
+	        var ajaxRequest = new ajaxHelper();
+	        ajaxRequest.addParams({
+	            module: 'API',
+	            method: 'TrafficSourcesProgression.getTrafficSourcesProgression',
+	            format: 'original',
+	            lastMinutes: 30
+	        }, 'get');
+	        ajaxRequest.setFormat('json');
+	        ajaxRequest.setCallback(function (series) {
+				// Push the new data onto our existing data array
+	        	$.each( series, function( index, value ){
+					if (!alreadyFetched[value.label]) {
+						alreadyFetched[value.label] = true;
+						//data = [ series ];
+						data.push(value);
+					}
+				});
+				if (!alreadyFetched[series.label]) {
+					alreadyFetched[series.label] = true;
+					//data = [ series ];
+					data.push(series);
+				}
+				plot.setData(data);
+				// Since the axes don't change, we don't need to call plot.setupGrid()
+				plot.draw();
+			});
+	        
+	        ajaxRequest.send(true);
+			setTimeout(function() { updateTrafficSourcesProgression(updateInterval); }, updateInterval);
 		}
 
 	});
