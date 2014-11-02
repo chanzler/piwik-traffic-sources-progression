@@ -7,10 +7,25 @@
 
 $(function() {
 
-		var plot;
+		var options = {
+			lines: {
+				show: true,
+				fill: 1 
+			},
+			points: {
+				show: false
+			},
+			xaxis: {
+				tickDecimals: 0,
+				tickSize: 0,
+				show:false
+			},
+			yaxis: {
+            	autoscaleMargin: 0.2
+            }				
+		}
 
-	    var updateTrafficSourcesProgression = function (updateInterval) {
-		//function update(updateInterval) {
+		var updateTrafficSourcesProgression = function (updateInterval) {
 			var alreadyFetched = {};
 	        var data = [];
 	        var ajaxRequest = new ajaxHelper();
@@ -35,9 +50,7 @@ $(function() {
 					//data = [ series ];
 					data.push(series);
 				}
-				plot.setData(data);
-				// Since the axes don't change, we don't need to call plot.setupGrid()
-				plot.draw();
+				$.plot("#tsp-placeholder", data, options);
 			});
 	        
 	        ajaxRequest.send(true);
@@ -71,28 +84,7 @@ $(function() {
 					//data = [ series ];
 					data.push(series);
 				}
-				plot = $.plot("#tsp-placeholder", data, {
-					lines: {
-						show: true,
-						fill: 1 
-					},
-					points: {
-						show: false
-					},
-					xaxis: {
-						tickDecimals: 0,
-						tickSize: 0,
-						show:false
-					},
-					yaxis: {
-		            	autoscaleMargin: 0.2
-		            }
-				});
-
-				//plot.setData(data);
-				// Since the axes don't change, we don't need to call plot.setupGrid()
-				//plot.setupGrid();
-				//plot.draw();
+				$.plot("#tsp-placeholder", data, options);
 			});
 	        
 	        ajaxRequest.send(true);
