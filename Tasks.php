@@ -70,14 +70,14 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        		$idSite, ($lastMinutes*$i)+($timeZoneDiff/60), ($lastMinutes*72)+($timeZoneDiff/60)+$lastMinutes
 	        ));
 	        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
-	        for($i=(round(time()/1200)-72); $i<round(time()/1200); $i++){
+	        for($i=(round((time()+$timeZoneDiff)/1200)-71); $i<=round((time()+$timeZoneDiff)/1200); $i++){
 				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 				\Piwik\Db::query($insert, array(
 		            $idSite, 10, $i, 0
 				));
 	        }
-	        for($i=(round((time()+$timeZoneDiff)/1200)-72); $i<round((time()+$timeZoneDiff)/1200); $i++){
+	        for($i=(round((time()+$timeZoneDiff)/1200)-71); $i<=round((time()+$timeZoneDiff)/1200); $i++){
 		        $socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
