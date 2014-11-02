@@ -31,7 +31,7 @@ class TrafficSourcesProgression extends \Piwik\Plugin
     public function getJsFiles(&$jsFiles)
     {
         $jsFiles[] = 'plugins/TrafficSourcesProgression/javascripts/jquery.flot.js';
-        $jsFiles[] = 'plugins/TrafficSourcesProgression/javascripts/trafficsources.js';
+        $jsFiles[] = 'plugins/TrafficSourcesProgression/javascripts/trafficsourcesprogression.js';
     }
 
     public function getStylesheetFiles(&$stylesheets)

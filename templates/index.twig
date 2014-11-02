@@ -1,60 +1,10 @@
-<div class="traffic-sources-progression-wrapper">
-	<div id="placeholder" class="tsp-placeholder" style="width:600px; height:300px;"></div>
+<div class="tsp-wrapper">
+	<div id="tsp-placeholder" class="tsp" style="width:600px; height:300px;"></div>
 </div>
 <span is="textspan"></span>
 		
 <script type="text/javascript">
   $(document).ready(function () {
-    //require('piwik/TrafficSourcesProgression').initSimpleRealtimeTrafficSourcesWidget({{ refreshInterval }});
-    $.plot($("#placeholder"), [ [[0, 0], [1, 1]] ], { yaxis: { max: 1 } });
-    
-        var options = {
-			lines: {
-				show: true,
-				fill: 1 
-			},
-			points: {
-				show: false
-			},
-			xaxis: {
-				tickDecimals: 0,
-				tickSize: 0,
-				show:false
-			},
-			yaxis: {
-            	autoscaleMargin: 0.2
-            }
-		};
-		var alreadyFetched = {};
-        var data = [];
-        var ajaxRequest = new ajaxHelper();
-        ajaxRequest.addParams({
-            module: 'API',
-            method: 'TrafficSourcesProgression.getTrafficSourcesProgression',
-            format: 'original',
-            lastMinutes: 30
-        }, 'get');
-        ajaxRequest.setFormat('json');
-        ajaxRequest.setCallback(function (series) {
-			//var firstcoordinate = "(" + series.data[0][0] + ", " + series.data[0][1] + ")";
-			//$("#textspan").text("Fetched " + series.label + ", first point: " + firstcoordinate);
-			// Push the new data onto our existing data array
-        	$.each( series, function( index, value ){
-				if (!alreadyFetched[value.label]) {
-					alreadyFetched[value.label] = true;
-					//data = [ series ];
-					data.push(value);
-				}
-			});
-			if (!alreadyFetched[series.label]) {
-				alreadyFetched[series.label] = true;
-				//data = [ series ];
-				data.push(series);
-			}
-			$.plot("#placeholder", data, options);        
-		});
-        
-        ajaxRequest.send(true);
-    
+    require('piwik/TrafficSourcesProgression').update({{ refreshInterval }});
   });
 </script>
