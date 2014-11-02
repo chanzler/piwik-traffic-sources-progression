@@ -68,6 +68,7 @@ class API extends \Piwik\Plugin\API {
 		$origin_dtz = new \DateTimeZone(Site::getTimezoneFor($idSite));
 		$origin_dt = new \DateTime("now", $origin_dtz);
 		$refTime = $origin_dt->format('Y-m-d H:i:s');
+		date_default_timezone_set(Site::getTimezoneFor($idSite));
         $campaignSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
