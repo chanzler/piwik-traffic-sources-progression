@@ -52,7 +52,9 @@ $(function() {
 					//data = [ series ];
 					data.push(series);
 				}
-				$.plot("#placeholder", data, options);        
+				plot.setData(data);
+				// Since the axes don't change, we don't need to call plot.setupGrid()
+				plot.draw();
 			});
 	        
 	        ajaxRequest.send(true);
