@@ -78,7 +78,7 @@ class API extends \Piwik\Plugin\API {
         $campaign = \Piwik\Db::fetchAll($campaignSql, array(
             $idSite
         ));
-		$campaignString = "\"".Piwik::translate('TrafficSources_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSources_Campaign')."\", \"data\":[";
+		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
         $campaignToday=0;
         foreach ($campaign as &$value) {
 			if (date("d", $value['timeslot']*1200)==date("d")){
@@ -100,7 +100,7 @@ class API extends \Piwik\Plugin\API {
         $direct = \Piwik\Db::fetchAll($directSql, array(
             $idSite
         ));
-		$directString = "\"".Piwik::translate('TrafficSources_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSources_Direct')."\", \"data\":[";
+		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
         $directToday=0;
         foreach ($direct as $key=>&$value) {
 			if (date("d", $value['timeslot']*1200)==date("d")){
@@ -123,7 +123,7 @@ class API extends \Piwik\Plugin\API {
         $search = \Piwik\Db::fetchAll($searchSql, array(
             $idSite
         ));
-		$searchString = "\"".Piwik::translate('TrafficSources_Search')."\":{\"label\":\"".Piwik::translate('TrafficSources_Search')."\", \"data\":[";
+		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')."\", \"data\":[";
         $searchToday=0;
         foreach ($search as $key=>&$value) {
 			if (date("d", $value['timeslot']*1200)==date("d")){
@@ -146,7 +146,7 @@ class API extends \Piwik\Plugin\API {
         $website = \Piwik\Db::fetchAll($websiteSql, array(
             $idSite
         ));
-		$websiteString = "\"".Piwik::translate('TrafficSources_Links')."\":{\"label\":\"".Piwik::translate('TrafficSources_Links')."\", \"data\":[";
+		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')."\", \"data\":[";
         $websiteToday=0;
         foreach ($website as $key=>&$value) {
 			if (date("d", $value['timeslot']*1200)==date("d")){
@@ -169,7 +169,7 @@ class API extends \Piwik\Plugin\API {
         $social = \Piwik\Db::fetchAll($socialSql, array(
             $idSite
         ));
-		$socialString = "\"".Piwik::translate('TrafficSources_Social')."\":{\"label\":\"".Piwik::translate('TrafficSources_Social')."\", \"data\":[";
+		$socialString = "\"".Piwik::translate('TrafficSourcesProgression_Social')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Social')."\", \"data\":[";
         $socialToday=0;
         foreach ($social as $key=>&$value) {
 			if (date("d", $value['timeslot']*1200)==date("d")){
