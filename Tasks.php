@@ -27,8 +27,10 @@ class Tasks extends \Piwik\Plugin\Tasks
 			$timeZoneDiff = API::get_timezone_offset('UTC', Site::getTimezoneFor($idSite));
 			$origin_dtz = new \DateTimeZone(Site::getTimezoneFor($idSite));
 			$origin_dt = new \DateTime("now", $origin_dtz);
-			$refTime = $origin_dt->format('Y-m-d H:i:s');
-	        
+            $utc_dtz = new \DateTimeZone('UTC');
+            $utc_dt = new \DateTime("now", $utc_dtz);
+            $refTime = $utc_dt->format('Y-m-d H:i:s');
+ 	        
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
 		        $directSql = "SELECT COUNT(*) AS number, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
