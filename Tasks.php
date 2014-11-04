@@ -36,18 +36,28 @@ class Tasks extends \Piwik\Plugin\Tasks
 			echo $minutesToMidnight;
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
-		        $directSql = "SELECT COUNT(*) AS number, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
-		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+
+				$directSql = "SELECT COUNT(*) AS number,round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum AS timeslot
+		                FROM piwik_log_visit
+						cross join (select @timenum := round(UNIX_TIMESTAMP(NOW()) /1200)) r
+						cross join (select @rownum := ?) s
 		                WHERE idsite = ?
-		                AND DATE_SUB('".$refTime."', INTERVAL 1 DAY) < visit_last_action_time
+		                AND DATE_SUB(NOW(), INTERVAL ? MINUTE) < visit_last_action_time
 		                AND referer_type = ".$source."
 		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
 		                ";
+		        /*$directSql = "SELECT IF(COUNT(*) > 0, 0, COUNT(*) AS number), round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+		                WHERE idsite = ?
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
+		                AND referer_type = ".$source."
+		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
+		                ";*/
 		        $direct = \Piwik\Db::fetchAll($directSql, array(
-		            $idSite, $lastMinutes * 60
+		            $minutesToMidnight/20, $idSite, $minutesToMidnight, $lastMinutes * 60
 		        ));
 		        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
-		        for($i=(round(time()/1200)-71); $i<=round(time()/1200); $i++){
+		        for($i=1; $i<=72; $i++){
 					$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 			                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 					\Piwik\Db::query($insert, array(
