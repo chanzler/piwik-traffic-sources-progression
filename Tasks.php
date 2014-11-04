@@ -37,8 +37,8 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
 
-				$directSql = "SELECT COUNT(*) AS number,round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum AS timeslot
-		                FROM piwik_log_visit
+				$directSql = "SELECT COUNT(*) AS number,round(round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
 		                WHERE idsite = ?
