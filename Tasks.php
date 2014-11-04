@@ -39,10 +39,10 @@ class Tasks extends \Piwik\Plugin\Tasks
 
 				$directSql = "SELECT COUNT(*) AS number,round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum AS timeslot
 		                FROM piwik_log_visit
-						cross join (select @timenum := round(UNIX_TIMESTAMP(".$refTime.") /1200)) r
+						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
 		                WHERE idsite = ?
-		                AND DATE_SUB(".$refTime.", INTERVAL ? MINUTE) < visit_last_action_time
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
 		                AND referer_type = ".$source."
 		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
 		                ";
