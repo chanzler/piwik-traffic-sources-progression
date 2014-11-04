@@ -30,7 +30,10 @@ class Tasks extends \Piwik\Plugin\Tasks
             $utc_dtz = new \DateTimeZone('UTC');
             $utc_dt = new \DateTime("now", $utc_dtz);
             $refTime = $utc_dt->format('Y-m-d H:i:s');
- 	        
+ 	        $hours = intval($origin_dt->format('H'));
+			$minutes = intval($origin_dt->format('i'));
+			$minutesToMidnight = $minutes+($hours*60);
+			echo $minutesToMidnight;
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
 		        $directSql = "SELECT COUNT(*) AS number, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
