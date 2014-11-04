@@ -79,7 +79,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            $idSite, 10, $i, 0
 				));
 	        }
-	        for($i=(round((time()+$timeZoneDiff)/1200)-71); $i<=round((time()+$timeZoneDiff)/1200); $i++){
+	        for($i=(round((time())/1200)-71); $i<=round((time())/1200); $i++){
 		        $socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
