@@ -82,7 +82,7 @@ class Tasks extends \Piwik\Plugin\Tasks
             ";*/
                 
 	        $social = \Piwik\Db::fetchAll($socialSql, array(
-		            $minutesToMidnight/20, $idSite, $minutesToMidnight, $lastMinutes * 60
+		            $minutesToMidnight/20, $idSite, $minutesToMidnight
 	        ));
 	        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
 	        for($i=1; $i<=72; $i++){
