@@ -46,13 +46,6 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                AND referer_type = ".$source."
 		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
 		                ";
-		        /*$directSql = "SELECT IF(COUNT(*) > 0, 0, COUNT(*) AS number), round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
-		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-		                WHERE idsite = ?
-		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-		                AND referer_type = ".$source."
-		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
-		                ";*/
 		        $direct = \Piwik\Db::fetchAll($directSql, array(
 		            $minutesToMidnight/20, $idSite, $minutesToMidnight, $lastMinutes * 60
 		        ));
