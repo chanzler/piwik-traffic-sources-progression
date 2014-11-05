@@ -33,11 +33,10 @@ class Tasks extends \Piwik\Plugin\Tasks
  	        $hours = intval($origin_dt->format('H'));
 			$minutes = intval($origin_dt->format('i'));
 			$minutesToMidnight = $minutes+($hours*60);
-			echo $minutesToMidnight;
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
 
-				$directSql = "SELECT COUNT(*) AS number,round(round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum) AS timeslot
+				$directSql = "SELECT COUNT(*) AS number, round(round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -65,17 +64,25 @@ class Tasks extends \Piwik\Plugin\Tasks
 					));
 	        	}
 	        }
-
-			$socialSql = "SELECT referer_url, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
+	        $socialSql = "SELECT referer_url, round(round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @rownum := ?) s
+		                WHERE idsite = ?
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
+		                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
+		                ";
+	         
+/*			$socialSql = "SELECT referer_url, round(UNIX_TIMESTAMP(visit_last_action_time) /1200) AS timeslot
                 FROM " . \Piwik\Common::prefixTable("log_visit") . "
                 WHERE idsite = ?
                 AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
                 AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) > visit_last_action_time
                 AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
-            ";
+            ";*/
                 
 	        $social = \Piwik\Db::fetchAll($socialSql, array(
-	        		$idSite, ($lastMinutes*$i)+($timeZoneDiff/60), ($lastMinutes*72)+($timeZoneDiff/60)+$lastMinutes
+		            $minutesToMidnight/20, $idSite, $minutesToMidnight, $lastMinutes * 60
 	        ));
 	        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
 	        for($i=(round((time()+$timeZoneDiff)/1200)-71); $i<=round((time()+$timeZoneDiff)/1200); $i++){
