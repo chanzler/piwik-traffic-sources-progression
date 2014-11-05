@@ -1,5 +1,5 @@
 <?php
-/**
+/** 
  * Piwik - free/libre analytics platform
  *
  * @link http://piwik.org
