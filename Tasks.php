@@ -85,15 +85,15 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            $minutesToMidnight/20, $idSite, $minutesToMidnight, $lastMinutes * 60
 	        ));
 	        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
-	        for($i=(round((time()+$timeZoneDiff)/1200)-71); $i<=round((time()+$timeZoneDiff)/1200); $i++){
-				$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+	        for($i=1; $i<=72; $i++){
+	        	$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
 				\Piwik\Db::query($insert, array(
 		            $idSite, 10, $i, 0
 				));
 	        }
-	        for($i=(round((time())/1200)-71); $i<=round((time())/1200); $i++){
-		        $socialCount = 0;
+	        for($i=1; $i<=72; $i++){
+	        	$socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
 		        }
