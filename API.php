@@ -81,14 +81,14 @@ class API extends \Piwik\Plugin\API {
 		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
         $campaignToday=0;
         foreach ($campaign as &$value) {
-			if (date("d", $value['timeslot']*1200)==date("d")){
+			//if (date("d", $value['timeslot']*1200)==date("d")){
 				$campaignString .= "[".$value['timeslot'].", ".$value['traffic']."],";
-				$campaignToday++;
-			}
+				//$campaignToday++;
+			//}
 		}
-        for($i=(round((time()+$timeZoneDiff)/1200)-(72-$campaignToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
-				$campaignString .= "[".$i.", 0],";
-		}
+//        for($i=(round((time()+$timeZoneDiff)/1200)-(72-$campaignToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
+//				$campaignString .= "[".$i.", 0],";
+//		}
 		$campaignString = rtrim($campaignString, ",");
 		$campaignString .= "]}";
         $directSql = "SELECT *
