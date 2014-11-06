@@ -46,7 +46,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		        $direct = \Piwik\Db::fetchAll($directSql, array(
-		            $minutesToMidnight/20, $idSite, ($minutesToMidnight<100)?$minutesToMidnight:100, $lastMinutes * 60
+		            round($minutesToMidnight/20), $idSite, ($minutesToMidnight<100)?$minutesToMidnight:100, $lastMinutes * 60
 		        ));
 		        $db_dateSql = "SELECT date
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
@@ -93,7 +93,7 @@ class Tasks extends \Piwik\Plugin\Tasks
             ";*/
                 
 	        /*$social = \Piwik\Db::fetchAll($socialSql, array(
-		            $minutesToMidnight/20, $idSite, $minutesToMidnight
+		            round($minutesToMidnight/20), $idSite, $minutesToMidnight
 	        ));
 	        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
 	        for($i=1; $i<=72; $i++){
