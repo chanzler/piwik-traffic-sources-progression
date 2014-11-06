@@ -85,7 +85,7 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$campaign = \Piwik\Db::fetchAll($campaignSql, array(
-				ceil($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
+				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
 		$index=0;
 		foreach ($campaign as &$value) {
@@ -124,7 +124,7 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$direct = \Piwik\Db::fetchAll($directSql, array(
-				ceil($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
+				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
 		$index=0;
 		foreach ($direct as &$value) {
@@ -163,7 +163,7 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$search = \Piwik\Db::fetchAll($searchSql, array(
-				ceil($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
+				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
 		$index=0;
 		foreach ($search as &$value) {
@@ -202,7 +202,7 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$website = \Piwik\Db::fetchAll($websiteSql, array(
-				ceil($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
+				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
 		$index=0;
 		foreach ($website as &$value) {
@@ -240,7 +240,7 @@ class API extends \Piwik\Plugin\API {
 		            AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
 		            ";
 	    $social = \Piwik\Db::fetchAll($socialSql, array(
-				ceil($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:100
+				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<60)?$minutesToMidnight:100
 	    ));
 	    for($i=($minutesToMidnight/20)-3; $i<=($minutesToMidnight/20); $i++){
 	       	$socialCount = 0;
