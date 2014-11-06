@@ -54,7 +54,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                ";
 		        $db_date = \Piwik\Db::fetchOne($db_dateSql, array());
 		        if (strcmp($origin_dt->format('d.m.Y'), $db_date)!=0) {
-			        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
+			        //\Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
 			        for($i=1; $i<=72; $i++){
 						$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     (idsite, source_id, timeslot, traffic, date) VALUES (?, ?, ?, ?, ?)";
@@ -95,7 +95,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        /*$social = \Piwik\Db::fetchAll($socialSql, array(
 		            round($minutesToMidnight/20), $idSite, $minutesToMidnight
 	        ));
-	        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
+	        //\Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
 	        for($i=1; $i<=72; $i++){
 	        	$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
