@@ -64,7 +64,17 @@ class API extends \Piwik\Plugin\API {
     public static function getTrafficSourcesProgression($idSite, $lastMinutes=20)
     {
         \Piwik\Piwik::checkUserHasViewAccess($idSite);
-       
+        $lastMinutes = 20;
+        $timeZoneDiff = API::get_timezone_offset('UTC', Site::getTimezoneFor($idSite));
+        $origin_dtz = new \DateTimeZone(Site::getTimezoneFor($idSite));
+        $origin_dt = new \DateTime("now", $origin_dtz);
+        $utc_dtz = new \DateTimeZone('UTC');
+        $utc_dt = new \DateTime("now", $utc_dtz);
+        $refTime = $utc_dt->format('Y-m-d H:i:s');
+        $hours = intval($origin_dt->format('H'));
+        $minutes = intval($origin_dt->format('i'));
+        $minutesToMidnight = $minutes+($hours*60);
+        
         $campaignSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
@@ -81,6 +91,31 @@ class API extends \Piwik\Plugin\API {
 		$campaignString = rtrim($campaignString, ",");
 		$campaignString .= "]}";
 
+
+
+		$directSql = "SELECT COUNT(*) AS number, round(round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @rownum := ?) s
+		                WHERE idsite = ?
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
+		                AND referer_type = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
+		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
+		                ";
+		$direct = \Piwik\Db::fetchAll($directSql, array(
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+		));
+		foreach ($direct as &$value) {
+			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+			\Piwik\Db::query($insert, array(
+					$value['number'], $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']
+			));
+		}
+		
+		
+		
+		
         $directSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
