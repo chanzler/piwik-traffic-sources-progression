@@ -15,7 +15,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 {
     public function schedule()
     {
-        $this->hourly('getTrafficSourcesTask');  // method will be executed once every hour
+//        $this->hourly('getTrafficSourcesTask');  // method will be executed once every hour
     }
 
     public function getTrafficSourcesTask()
@@ -46,7 +46,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
 		                ";
 		        $direct = \Piwik\Db::fetchAll($directSql, array(
-		            $minutesToMidnight/20, $idSite, $minutesToMidnight, $lastMinutes * 60
+		            $minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
 		        ));
 		        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
 		        for($i=1; $i<=72; $i++){
@@ -81,7 +81,7 @@ class Tasks extends \Piwik\Plugin\Tasks
                 AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
             ";*/
                 
-	        $social = \Piwik\Db::fetchAll($socialSql, array(
+	        /*$social = \Piwik\Db::fetchAll($socialSql, array(
 		            $minutesToMidnight/20, $idSite, $minutesToMidnight
 	        ));
 	        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
@@ -102,7 +102,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 				\Piwik\Db::query($insert, array(
 			           $socialCount, $idSite, 10, $i
 				));
-		    }
+		    }*/
 		}
     }
 }
