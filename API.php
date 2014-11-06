@@ -75,6 +75,25 @@ class API extends \Piwik\Plugin\API {
         $minutes = intval($origin_dt->format('i'));
         $minutesToMidnight = $minutes+($hours*60);
         
+    	$campaignSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @rownum := ?) s
+		                WHERE idsite = ?
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
+		                AND referer_type = ".Common::REFERRER_TYPE_CAMPAIGN."
+		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
+		                ";
+		$campaign = \Piwik\Db::fetchAll($campaignSql, array(
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+		));
+		foreach ($campaign as &$value) {
+			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+			\Piwik\Db::query($insert, array(
+					$value['number'], $idSite, Common::REFERRER_TYPE_CAMPAIGN, $value['timeslot']
+			));
+		}
         $campaignSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
@@ -90,8 +109,6 @@ class API extends \Piwik\Plugin\API {
 		}
 		$campaignString = rtrim($campaignString, ",");
 		$campaignString .= "]}";
-
-
 
 		$directSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
@@ -112,10 +129,6 @@ class API extends \Piwik\Plugin\API {
 					$value['number'], $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']
 			));
 		}
-		
-		
-		
-		
         $directSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
@@ -132,7 +145,26 @@ class API extends \Piwik\Plugin\API {
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";
 		
-        $searchSql = "SELECT *
+    	$searchSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @rownum := ?) s
+		                WHERE idsite = ?
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
+		                AND referer_type = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
+		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
+		                ";
+		$search = \Piwik\Db::fetchAll($searchSql, array(
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+		));
+		foreach ($search as &$value) {
+			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+			\Piwik\Db::query($insert, array(
+					$value['number'], $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot']
+			));
+		}
+		$searchSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
@@ -148,7 +180,26 @@ class API extends \Piwik\Plugin\API {
 		$searchString = rtrim($searchString, ",");
 		$searchString .= "]}";
 
-        $websiteSql = "SELECT *
+    	$websiteSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @rownum := ?) s
+		                WHERE idsite = ?
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
+		                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
+		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
+		                ";
+		$website = \Piwik\Db::fetchAll($websiteSql, array(
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+		));
+		foreach ($website as &$value) {
+			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+			\Piwik\Db::query($insert, array(
+					$value['number'], $idSite, Common::REFERRER_TYPE_WEBSITE, $value['timeslot']
+			));
+		}
+		$websiteSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_WEBSITE."
@@ -164,7 +215,29 @@ class API extends \Piwik\Plugin\API {
 		$websiteString = rtrim($websiteString, ",");
 		$websiteString .= "]}";
 
-        $socialSql = "SELECT *
+    	$socialSql = "SELECT referer_url, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		            FROM " . \Piwik\Common::prefixTable("log_visit") . "
+					cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+					cross join (select @rownum := ?) s
+		            WHERE idsite = ?
+		            AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
+		            AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
+		            ";
+	    $social = \Piwik\Db::fetchAll($socialSql, array(
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60
+	    ));
+	    for($i=($minutesToMidnight/20)-3; $i<=($minutesToMidnight/20); $i++){
+	       	$socialCount = 0;
+	        foreach ($social as &$value) {
+	       		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
+		    }
+			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+		               SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+			\Piwik\Db::query($insert, array(
+		           $socialCount, $idSite, 10, $i
+			));
+		}
+		$socialSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = 10
@@ -181,11 +254,6 @@ class API extends \Piwik\Plugin\API {
 		$socialString .= "]}";
 
 		$out = "{".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$campaignString."}";
-		//$out = '{"Social":{"label":"Social", "data":[[1179059, 0],[1179060, 7],[1179061, 5],[1179062, 0],[1179063, 7],[1179064, 0],[1179065, 1],[1179066, 0],[1179067, 0],[1179068, 1],[1179069, 0],[1179070, 0],[1179071, 1],[1179072, 0],[1179073, 0],[1179074, 0],[1179075, 1],[1179076, 0],[1179077, 0],[1179078, 0],[1179079, 0],[1179080, 0],[1179081, 0],[1179082, 0],[1179083, 0],[1179084, 1],[1179085, 0],[1179086, 0],[1179087, 0],[1179088, 1],[1179089, 1],[1179090, 0],[1179091, 2],[1179092, 1],[1179093, 4],[1179094, 5],[1179095, 5],[1179096, 4],[1179097, 2],[1179098, 1],[1179099, 2],[1179100, 1],[1179101, 4],[1179102, 5],[1179103, 4],[1179104, 0],[1179105, 3],[1179106, 2],[1179107, 1],[1179108, 5],[1179109, 4],[1179110, 2],[1179111, 1],[1179112, 7],[1179113, 3],[1179114, 3],[1179115, 4],[1179116, 1],[1179117, 3],[1179118, 4],[1179119, 9],[1179120, 4],[1179121, 3],[1179122, 5],[1179123, 7],[1179124, 5],[1179125, 5],[1179126, 2],[1179127, 4],[1179128, 1],[1179129, 0],[1179130, 0]]},
-		//"Links":{"label":"Links", "data":[[1179059, 0],[1179060, 4],[1179061, 5],[1179062, 0],[1179063, 1],[1179064, 0],[1179065, 1],[1179066, 0],[1179067, 0],[1179068, 1],[1179069, 0],[1179070, 0],[1179071, 1],[1179072, 0],[1179073, 0],[1179074, 0],[1179075, 1],[1179076, 0],[1179077, 0],[1179078, 0],[1179079, 0],[1179080, 0],[1179081, 0],[1179082, 0],[1179083, 0],[1179084, 1],[1179085, 0],[1179086, 0],[1179087, 0],[1179088, 1],[1179089, 1],[1179090, 0],[1179091, 2],[1179092, 1],[1179093, 4],[1179094, 5],[1179095, 5],[1179096, 4],[1179097, 2],[1179098, 1],[1179099, 2],[1179100, 1],[1179101, 4],[1179102, 5],[1179103, 4],[1179104, 0],[1179105, 3],[1179106, 2],[1179107, 1],[1179108, 5],[1179109, 4],[1179110, 2],[1179111, 1],[1179112, 7],[1179113, 3],[1179114, 3],[1179115, 4],[1179116, 1],[1179117, 3],[1179118, 4],[1179119, 9],[1179120, 4],[1179121, 3],[1179122, 5],[1179123, 7],[1179124, 5],[1179125, 5],[1179126, 2],[1179127, 4],[1179128, 1],[1179129, 0],[1179130, 0]]},
-		//"Suche":{"label":"Suche", "data":[[1179059, 0],[1179060, 4],[1179061, 5],[1179062, 0],[1179063, 1],[1179064, 0],[1179065, 1],[1179066, 0],[1179067, 0],[1179068, 1],[1179069, 0],[1179070, 0],[1179071, 1],[1179072, 0],[1179073, 0],[1179074, 0],[1179075, 1],[1179076, 0],[1179077, 0],[1179078, 0],[1179079, 0],[1179080, 0],[1179081, 0],[1179082, 0],[1179083, 0],[1179084, 1],[1179085, 0],[1179086, 0],[1179087, 0],[1179088, 1],[1179089, 1],[1179090, 0],[1179091, 2],[1179092, 1],[1179093, 4],[1179094, 5],[1179095, 5],[1179096, 4],[1179097, 1],[1179098, 1],[1179099, 2],[1179100, 1],[1179101, 4],[1179102, 5],[1179103, 4],[1179104, 0],[1179105, 3],[1179106, 2],[1179107, 1],[1179108, 5],[1179109, 4],[1179110, 2],[1179111, 1],[1179112, 7],[1179113, 3],[1179114, 3],[1179115, 4],[1179116, 1],[1179117, 3],[1179118, 4],[1179119, 9],[1179120, 4],[1179121, 3],[1179122, 5],[1179123, 6],[1179124, 5],[1179125, 5],[1179126, 2],[1179127, 4],[1179128, 1],[1179129, 0],[1179130, 0]]},
-		//"Direkt":{"label":"Direkt", "data":[[1179059, 0],[1179060, 1],[1179061, 0],[1179062, 0],[1179063, 0],[1179064, 0],[1179065, 0],[1179066, 0],[1179067, 0],[1179068, 0],[1179069, 0],[1179070, 0],[1179071, 0],[1179072, 0],[1179073, 0],[1179074, 0],[1179075, 0],[1179076, 0],[1179077, 0],[1179078, 0],[1179079, 0],[1179080, 0],[1179081, 0],[1179082, 0],[1179083, 0],[1179084, 1],[1179085, 0],[1179086, 0],[1179087, 0],[1179088, 0],[1179089, 0],[1179090, 0],[1179091, 1],[1179092, 0],[1179093, 1],[1179094, 2],[1179095, 0],[1179096, 0],[1179097, 0],[1179098, 1],[1179099, 1],[1179100, 0],[1179101, 1],[1179102, 0],[1179103, 2],[1179104, 0],[1179105, 2],[1179106, 0],[1179107, 0],[1179108, 1],[1179109, 1],[1179110, 0],[1179111, 0],[1179112, 2],[1179113, 0],[1179114, 1],[1179115, 2],[1179116, 0],[1179117, 0],[1179118, 0],[1179119, 0],[1179120, 1],[1179121, 0],[1179122, 0],[1179123, 1],[1179124, 0],[1179125, 0],[1179126, 0],[1179127, 0],[1179128, 0],[1179129, 0],[1179130, 0]]},
-		//"Kampagnen":{"label":"Kampagnen", "data":[[1179059, 0],[1179060, 0],[1179061, 0],[1179062, 0],[1179063, 0],[1179064, 0],[1179065, 0],[1179066, 0],[1179067, 0],[1179068, 0],[1179069, 0],[1179070, 0],[1179071, 0],[1179072, 0],[1179073, 0],[1179074, 0],[1179075, 0],[1179076, 0],[1179077, 0],[1179078, 0],[1179079, 0],[1179080, 0],[1179081, 0],[1179082, 0],[1179083, 0],[1179084, 0],[1179085, 0],[1179086, 0],[1179087, 0],[1179088, 0],[1179089, 0],[1179090, 0],[1179091, 0],[1179092, 0],[1179093, 0],[1179094, 0],[1179095, 0],[1179096, 0],[1179097, 0],[1179098, 0],[1179099, 0],[1179100, 0],[1179101, 0],[1179102, 0],[1179103, 0],[1179104, 0],[1179105, 0],[1179106, 0],[1179107, 0],[1179108, 0],[1179109, 0],[1179110, 0],[1179111, 0],[1179112, 0],[1179113, 0],[1179114, 0],[1179115, 0],[1179116, 0],[1179117, 0],[1179118, 0],[1179119, 0],[1179120, 0],[1179121, 0],[1179122, 0],[1179123, 0],[1179124, 0],[1179125, 0],[1179126, 0],[1179127, 0],[1179128, 0],[1179129, 0],[1179130, 0]]}}';
 		return $out;
     }
 

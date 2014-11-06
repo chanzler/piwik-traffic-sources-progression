@@ -88,7 +88,7 @@ class Tasks extends \Piwik\Plugin\Tasks
                 AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
             ";*/
                 
-	        /*$social = \Piwik\Db::fetchAll($socialSql, array(
+	        $social = \Piwik\Db::fetchAll($socialSql, array(
 		            $minutesToMidnight/20, $idSite, $minutesToMidnight
 	        ));
 	        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
@@ -109,7 +109,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 				\Piwik\Db::query($insert, array(
 			           $socialCount, $idSite, 10, $i
 				));
-		    }*/
+		    }
 		}
     }
 }
