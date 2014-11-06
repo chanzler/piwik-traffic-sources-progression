@@ -48,13 +48,20 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        $direct = \Piwik\Db::fetchAll($directSql, array(
 		            $minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
 		        ));
-		        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
-		        for($i=1; $i<=72; $i++){
-					$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
-					\Piwik\Db::query($insert, array(
-			            $idSite, $source, $i, 0
-					));
+		        $db_dateSql = "SELECT date
+		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+						WHERE idsite = 1 AND timeslot = 72
+		                ";
+		        $db_date = \Piwik\Db::fetchOne($db_dateSql, array());
+		        if (strcmp($origin_dt->format('d.m.Y'), $db_date)!=0) {
+			        \Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
+			        for($i=1; $i<=72; $i++){
+						$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
+						\Piwik\Db::query($insert, array(
+				            $idSite, $source, $i, 0, $origin_dt->format('d.m.Y')
+						));
+			        }
 		        }
 		        foreach ($direct as &$value) {
 					$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "

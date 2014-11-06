@@ -54,8 +54,9 @@ class TrafficSourcesProgression extends \Piwik\Plugin
                         idsite INT( 10 ) NOT NULL ,
                         source_id INT( 10 ) NOT NULL ,
                         timeslot INT( 10 ) NOT NULL ,
-                        traffic INT( 11 ) NOT NULL
-                    )";
+                        traffic INT( 11 ) NOT NULL,
+                        date VARCHAR( 10 ) NOT NULL
+            		)";
             \Piwik\Db::exec($sql);
         } catch (Exception $e) {
             // ignore error if table already exists (1050 code is for 'table already exists')
