@@ -85,17 +85,21 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$campaign = \Piwik\Db::fetchAll($campaignSql, array(
-				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
+		$index=0;
 		foreach ($campaign as &$value) {
-			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
-			\Piwik\Db::query($insert, array(
-					$value['number'], $idSite, Common::REFERRER_TYPE_CAMPAIGN, $value['timeslot']
-			));
+			if ($index > 0){
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				\Piwik\Db::query($insert, array(
+						$value['number'], $idSite, Common::REFERRER_TYPE_CAMPAIGN, $value['timeslot']
+				));
+			}
+			$index++;
 		}
         $campaignSql = "SELECT *
-                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_CAMPAIGN."
                 ORDER BY timeslot ASC
@@ -120,14 +124,18 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$direct = \Piwik\Db::fetchAll($directSql, array(
-				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
+		$index=0;
 		foreach ($direct as &$value) {
-			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
-			\Piwik\Db::query($insert, array(
-					$value['number'], $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']
-			));
+			if ($index > 0){
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				\Piwik\Db::query($insert, array(
+						$value['number'], $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot']
+				));
+			}
+			$index++;
 		}
         $directSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
@@ -155,14 +163,18 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$search = \Piwik\Db::fetchAll($searchSql, array(
-				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
+		$index=0;
 		foreach ($search as &$value) {
-			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
-			\Piwik\Db::query($insert, array(
-					$value['number'], $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot']
-			));
+			if ($index > 0){
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				\Piwik\Db::query($insert, array(
+						$value['number'], $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot']
+				));
+			}
+			$index++;
 		}
 		$searchSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
@@ -190,15 +202,19 @@ class API extends \Piwik\Plugin\API {
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$website = \Piwik\Db::fetchAll($websiteSql, array(
-				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:80, $lastMinutes * 60
 		));
+		$index=0;
 		foreach ($website as &$value) {
-			$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
-			\Piwik\Db::query($insert, array(
-					$value['number'], $idSite, Common::REFERRER_TYPE_WEBSITE, $value['timeslot']
-			));
-		}
+			if ($index > 0){
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+		                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				\Piwik\Db::query($insert, array(
+						$value['number'], $idSite, Common::REFERRER_TYPE_WEBSITE, $value['timeslot']
+				));
+			}
+			$index++;
+		}		
 		$websiteSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
@@ -224,7 +240,7 @@ class API extends \Piwik\Plugin\API {
 		            AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
 		            ";
 	    $social = \Piwik\Db::fetchAll($socialSql, array(
-				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60
+				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:100
 	    ));
 	    for($i=($minutesToMidnight/20)-3; $i<=($minutesToMidnight/20); $i++){
 	       	$socialCount = 0;
