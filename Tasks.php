@@ -15,7 +15,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 {
     public function schedule()
     {
-//        $this->hourly('getTrafficSourcesTask');  // method will be executed once every hour
+        $this->hourly('getTrafficSourcesTask');  // method will be executed once every hour
     }
 
     public function getTrafficSourcesTask()
