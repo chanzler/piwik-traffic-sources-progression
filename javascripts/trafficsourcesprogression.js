@@ -10,6 +10,7 @@ $(function() {
 		var options = {
 			lines: {
 				show: true,
+				zero: false,
 				fill: 1 
 			},
 			points: {
