@@ -93,14 +93,14 @@ class API extends \Piwik\Plugin\API {
 
 
 
-		$directSql = "SELECT COUNT(*) AS number, round(round(UNIX_TIMESTAMP(visit_last_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		$directSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
 		                WHERE idsite = ?
-		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
 		                AND referer_type = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
-		                GROUP BY round(UNIX_TIMESTAMP(visit_last_action_time) / ?)
+		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		$direct = \Piwik\Db::fetchAll($directSql, array(
 				$minutesToMidnight/20, $idSite, ($minutesToMidnight<60)?$minutesToMidnight:60, $lastMinutes * 60
