@@ -89,7 +89,7 @@ class API extends \Piwik\Plugin\API {
 		));
 		$index=0;
 		foreach ($campaign as &$value) {
-			if ($index > 0){
+			if ($index > 0 || $minutesToMidnight < 20){
 				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
 				\Piwik\Db::query($insert, array(
@@ -128,7 +128,7 @@ class API extends \Piwik\Plugin\API {
 		));
 		$index=0;
 		foreach ($direct as &$value) {
-			if ($index > 0){
+			if ($index > 0 || $minutesToMidnight < 20){
 				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
 				\Piwik\Db::query($insert, array(
@@ -167,7 +167,7 @@ class API extends \Piwik\Plugin\API {
 		));
 		$index=0;
 		foreach ($search as &$value) {
-			if ($index > 0){
+			if ($index > 0 || $minutesToMidnight < 20){
 				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
 				\Piwik\Db::query($insert, array(
@@ -206,7 +206,7 @@ class API extends \Piwik\Plugin\API {
 		));
 		$index=0;
 		foreach ($website as &$value) {
-			if ($index > 0){
+			if ($index > 0 || $minutesToMidnight < 20){
 				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
 				\Piwik\Db::query($insert, array(
