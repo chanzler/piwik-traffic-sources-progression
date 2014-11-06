@@ -23,7 +23,10 @@ $(function() {
 			},
 			yaxis: {
             	autoscaleMargin: 0.2
-            }				
+            },
+            legend: {
+            	position: "nw"
+            }
 		}
 
 		var updateTrafficSourcesProgression = function (updateInterval) {
@@ -45,7 +48,7 @@ $(function() {
 						data.push(value);
 					}
 				});
-	        	options.xaxis.ticks = [[data[0].data[0][0],"0"],[data[0].data[18][0],"6"],[data[0].data[36][0],"12"],[data[0].data[54][0],"18"],[data[0].data[71][0],"24"]];
+	        	options.xaxis.ticks = [[data[0].data[0][0],"0h"],[data[0].data[18][0],"6h"],[data[0].data[36][0],"12h"],[data[0].data[54][0],"18h"],[data[0].data[71][0],"24h"]];
 				$.plot("#tsp-placeholder", data, options);
 			});
 	        
