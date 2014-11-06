@@ -79,7 +79,7 @@ class API extends \Piwik\Plugin\API {
             $idSite
         ));
 		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
-        $campaignToday=0;
+        //$campaignToday=0;
         foreach ($campaign as &$value) {
 			//if (date("d", $value['timeslot']*1200)==date("d")){
 				$campaignString .= "[".$value['timeslot'].", ".$value['traffic']."],";
@@ -101,16 +101,16 @@ class API extends \Piwik\Plugin\API {
             $idSite
         ));
 		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
-        $directToday=0;
+        //$directToday=0;
         foreach ($direct as $key=>&$value) {
-			if (date("d", $value['timeslot']*1200)==date("d")){
+			//if (date("d", $value['timeslot']*1200)==date("d")){
 				$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
-				$directToday++;
-			}
+			//	$directToday++;
+			//}
 		}
-        for($i=(round((time()+$timeZoneDiff)/1200)-(72-$directToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
-				$directString .= "[".$i.", 0],";
-		}
+        //for($i=(round((time()+$timeZoneDiff)/1200)-(72-$directToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
+		//		$directString .= "[".$i.", 0],";
+		//}
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";
 		
@@ -124,16 +124,16 @@ class API extends \Piwik\Plugin\API {
             $idSite
         ));
 		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')."\", \"data\":[";
-        $searchToday=0;
+        //$searchToday=0;
         foreach ($search as $key=>&$value) {
-			if (date("d", $value['timeslot']*1200)==date("d")){
+			//if (date("d", $value['timeslot']*1200)==date("d")){
 				$searchString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
-				$searchToday++;
-			}
+			//	$searchToday++;
+			//}
 		}
-        for($i=(round((time()+$timeZoneDiff)/1200)-(72-$searchToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
-				$searchString .= "[".$i.", 0],";
-		}
+        //for($i=(round((time()+$timeZoneDiff)/1200)-(72-$searchToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
+		//		$searchString .= "[".$i.", 0],";
+		//}
 		$searchString = rtrim($searchString, ",");
 		$searchString .= "]}";
 
@@ -147,16 +147,16 @@ class API extends \Piwik\Plugin\API {
             $idSite
         ));
 		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')."\", \"data\":[";
-        $websiteToday=0;
+        //$websiteToday=0;
         foreach ($website as $key=>&$value) {
-			if (date("d", $value['timeslot']*1200)==date("d")){
+			//if (date("d", $value['timeslot']*1200)==date("d")){
 				$websiteString .= "[".$value['timeslot'].", ".($value['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
-				$websiteToday++;
-			}
+			//	$websiteToday++;
+			//}
 		}
-        for($i=(round((time()+$timeZoneDiff)/1200)-(72-$websiteToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
-				$websiteString .= "[".$i.", 0],";
-		}
+        //for($i=(round((time()+$timeZoneDiff)/1200)-(72-$websiteToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
+		//		$websiteString .= "[".$i.", 0],";
+		//}
 		$websiteString = rtrim($websiteString, ",");
 		$websiteString .= "]}";
 
@@ -170,16 +170,16 @@ class API extends \Piwik\Plugin\API {
             $idSite
         ));
 		$socialString = "\"".Piwik::translate('TrafficSourcesProgression_Social')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Social')."\", \"data\":[";
-        $socialToday=0;
+        //$socialToday=0;
         foreach ($social as $key=>&$value) {
-			if (date("d", $value['timeslot']*1200)==date("d")){
+			//if (date("d", $value['timeslot']*1200)==date("d")){
 				$socialString .= "[".$value['timeslot'].", ".($value['traffic']+$website[$key]['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
-				$socialToday++;
-			}
+			//	$socialToday++;
+			//}
 		}
-        for($i=(round((time()+$timeZoneDiff)/1200)-(72-$socialToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
-				$socialString .= "[".$i.", 0],";
-		}
+        //for($i=(round((time()+$timeZoneDiff)/1200)-(72-$socialToday))-1; $i<round((time()+$timeZoneDiff)/1200); $i++){
+		//		$socialString .= "[".$i.", 0],";
+		//}
 		$socialString = rtrim($socialString, ",");
 		$socialString .= "]}";
 
