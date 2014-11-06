@@ -63,12 +63,16 @@ class Tasks extends \Piwik\Plugin\Tasks
 						));
 			        }
 		        }
+		        $index = 0;
 		        foreach ($direct as &$value) {
-					$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
-					\Piwik\Db::query($insert, array(
-			            $value['number'], $idSite, $source, $value['timeslot']
-					));
+					if ($index > 0){
+			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+						\Piwik\Db::query($insert, array(
+				            $value['number'], $idSite, $source, $value['timeslot']
+						));
+					}
+					$index++;
 	        	}
 	        }
 	        $socialSql = "SELECT referer_url, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
