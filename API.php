@@ -102,10 +102,11 @@ class API extends \Piwik\Plugin\API {
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_CAMPAIGN."
+                AND date = ?
                 ORDER BY timeslot ASC
                 ";
         $campaign = \Piwik\Db::fetchAll($campaignSql, array(
-            $idSite
+            $idSite, $origin_dt->format('d.m.Y')
         ));
 		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
         foreach ($campaign as &$value) {
@@ -141,10 +142,11 @@ class API extends \Piwik\Plugin\API {
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
+                AND date = ?
                 ORDER BY timeslot ASC
                 ";
         $direct = \Piwik\Db::fetchAll($directSql, array(
-            $idSite
+            $idSite, $origin_dt->format('d.m.Y')
         ));
 		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
         foreach ($direct as $key=>&$value) {
@@ -180,10 +182,11 @@ class API extends \Piwik\Plugin\API {
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
+                AND date = ?
                 ORDER BY timeslot ASC
                 ";
         $search = \Piwik\Db::fetchAll($searchSql, array(
-            $idSite
+            $idSite, $origin_dt->format('d.m.Y')
         ));
 		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')."\", \"data\":[";
         foreach ($search as $key=>&$value) {
@@ -219,10 +222,11 @@ class API extends \Piwik\Plugin\API {
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = ".Common::REFERRER_TYPE_WEBSITE."
+                AND date = ?
                 ORDER BY timeslot ASC
                 ";
         $website = \Piwik\Db::fetchAll($websiteSql, array(
-            $idSite
+            $idSite, $origin_dt->format('d.m.Y')
         ));
 		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')."\", \"data\":[";
         foreach ($website as $key=>&$value) {
@@ -257,10 +261,11 @@ class API extends \Piwik\Plugin\API {
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
                 AND source_id = 10
+                AND date = ?
                 ORDER BY timeslot ASC
                 ";
         $social = \Piwik\Db::fetchAll($socialSql, array(
-            $idSite
+            $idSite, $origin_dt->format('d.m.Y')
         ));
 		$socialString = "\"".Piwik::translate('TrafficSourcesProgression_Social')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Social')."\", \"data\":[";
         foreach ($social as $key=>&$value) {
