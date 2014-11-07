@@ -108,6 +108,20 @@ class API extends \Piwik\Plugin\API {
         $campaign = \Piwik\Db::fetchAll($campaignSql, array(
             $idSite, $origin_dt->format('d.m.Y')
         ));
+		if (count($campaign) == 0){
+		     $clone = clone $origin-dt;    
+			 $clone->modify( '-1 day' );
+			 $campaignSql = "SELECT *
+		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
+	    	            WHERE idsite = ?
+	        	        AND source_id = ".Common::REFERRER_TYPE_CAMPAIGN."
+	            	    AND date = ?
+	                	ORDER BY timeslot ASC
+	                ";
+		    $campaign = \Piwik\Db::fetchAll($campaignSql, array(
+		    	$idSite, $clone->format('d.m.Y')
+	        ));
+		}
 		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
         foreach ($campaign as &$value) {
 			$campaignString .= "[".$value['timeslot'].", ".$value['traffic']."],";
@@ -148,6 +162,20 @@ class API extends \Piwik\Plugin\API {
         $direct = \Piwik\Db::fetchAll($directSql, array(
             $idSite, $origin_dt->format('d.m.Y')
         ));
+		if (count($direct) == 0){
+		     $clone = clone $origin-dt;    
+			 $clone->modify( '-1 day' );
+			 $directSql = "SELECT *
+		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
+	    	            WHERE idsite = ?
+	        	        AND source_id = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
+	            	    AND date = ?
+	                	ORDER BY timeslot ASC
+	                ";
+		    $direct = \Piwik\Db::fetchAll($directSql, array(
+		    	$idSite, $clone->format('d.m.Y')
+	        ));
+		}
 		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
         foreach ($direct as $key=>&$value) {
 			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
@@ -188,6 +216,20 @@ class API extends \Piwik\Plugin\API {
         $search = \Piwik\Db::fetchAll($searchSql, array(
             $idSite, $origin_dt->format('d.m.Y')
         ));
+		if (count($search) == 0){
+		     $clone = clone $origin-dt;    
+			 $clone->modify( '-1 day' );
+			 $searchSql = "SELECT *
+		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
+	    	            WHERE idsite = ?
+	        	        AND source_id = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
+	            	    AND date = ?
+	                	ORDER BY timeslot ASC
+	                ";
+		    $search = \Piwik\Db::fetchAll($searchSql, array(
+		    	$idSite, $clone->format('d.m.Y')
+	        ));
+		}
 		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')."\", \"data\":[";
         foreach ($search as $key=>&$value) {
 			$searchString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
@@ -228,6 +270,20 @@ class API extends \Piwik\Plugin\API {
         $website = \Piwik\Db::fetchAll($websiteSql, array(
             $idSite, $origin_dt->format('d.m.Y')
         ));
+		if (count($website) == 0){
+		     $clone = clone $origin-dt;    
+			 $clone->modify( '-1 day' );
+			 $websiteSql = "SELECT *
+		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
+	    	            WHERE idsite = ?
+	        	        AND source_id = ".Common::REFERRER_TYPE_WEBSITE."
+	            	    AND date = ?
+	                	ORDER BY timeslot ASC
+	                ";
+		    $website = \Piwik\Db::fetchAll($websiteSql, array(
+		    	$idSite, $clone->format('d.m.Y')
+	        ));
+		}
 		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')."\", \"data\":[";
         foreach ($website as $key=>&$value) {
 			$websiteString .= "[".$value['timeslot'].", ".($value['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
@@ -267,6 +323,20 @@ class API extends \Piwik\Plugin\API {
         $social = \Piwik\Db::fetchAll($socialSql, array(
             $idSite, $origin_dt->format('d.m.Y')
         ));
+		if (count($social) == 0){
+		    $clone = clone $origin-dt;    
+			$clone->modify( '-1 day' );
+			$socialSql = "SELECT *
+	                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+	                WHERE idsite = ?
+	                AND source_id = 10
+	                AND date = ?
+	                ORDER BY timeslot ASC
+	                ";
+		    $social = \Piwik\Db::fetchAll($socialSql, array(
+		    	$idSite, $clone->format('d.m.Y')
+	        ));
+		}
 		$socialString = "\"".Piwik::translate('TrafficSourcesProgression_Social')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Social')."\", \"data\":[";
         foreach ($social as $key=>&$value) {
 			$socialString .= "[".$value['timeslot'].", ".($value['traffic']+$website[$key]['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
