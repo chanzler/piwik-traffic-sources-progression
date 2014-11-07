@@ -50,9 +50,9 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        ));
 		        $db_dateSql = "SELECT MAX(date)
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-						WHERE idsite = 1 AND timeslot = 72
+						WHERE idsite = ? AND timeslot = 72 AND source_id = ?
 		                ";
-		        $db_date = \Piwik\Db::fetchOne($db_dateSql, array());
+		        $db_date = \Piwik\Db::fetchOne($db_dateSql, array($idSite, $source));
 		        if (strcmp($origin_dt->format('d.m.Y'), $db_date)!=0) {
 			        //\Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
 			        for($i=1; $i<=72; $i++){
