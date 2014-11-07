@@ -48,7 +48,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        $direct = \Piwik\Db::fetchAll($directSql, array(
 		            round($minutesToMidnight/20), $idSite, ($minutesToMidnight<100)?$minutesToMidnight:100, $lastMinutes * 60
 		        ));
-		        $db_dateSql = "SELECT date
+		        $db_dateSql = "SELECT MAX(date)
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 						WHERE idsite = 1 AND timeslot = 72
 		                ";
