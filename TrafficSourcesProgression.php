@@ -58,6 +58,13 @@ class TrafficSourcesProgression extends \Piwik\Plugin
                         date VARCHAR( 10 ) NOT NULL
             		)";
             \Piwik\Db::exec($sql);
+			$unique = "ALTER TABLE " . Common::prefixTable('trafficsourcesprogression_sources') . " ADD UNIQUE (
+						`idsite` ,
+						`source_id` ,
+						`timeslot` ,
+						`date`
+						);";
+            \Piwik\Db::exec($unique);
         } catch (Exception $e) {
             // ignore error if table already exists (1050 code is for 'table already exists')
             if (!\Piwik\Db::get()->isErrNo($e, '1050')) {

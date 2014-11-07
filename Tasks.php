@@ -67,9 +67,9 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        foreach ($direct as &$value) {
 					if ($index > 0){
 			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 						\Piwik\Db::query($insert, array(
-				            $value['number'], $idSite, $source, $value['timeslot']
+				            $value['number'], $idSite, $source, $value['timeslot'], $origin_dt->format('d.m.Y')
 						));
 					}
 					$index++;
@@ -98,9 +98,9 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        //\Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
 	        for($i=1; $i<=72; $i++){
 	        	$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?)";
+		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?) AND date = ?";
 				\Piwik\Db::query($insert, array(
-		            $idSite, 10, $i, 0
+		            $idSite, 10, $i, 0, $origin_dt->format('d.m.Y')
 				));
 	        }
 	        for($i=1; $i<=72; $i++){
@@ -109,9 +109,9 @@ class Tasks extends \Piwik\Plugin\Tasks
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
 		        }
 				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			               SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ?";
+			               SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 				\Piwik\Db::query($insert, array(
-			           $socialCount, $idSite, 10, $i
+			           $socialCount, $idSite, 10, $i, $origin_dt->format('d.m.Y')
 				));
 		    }*/
 		}
