@@ -59,10 +59,10 @@ class TrafficSourcesProgression extends \Piwik\Plugin
             		)";
             \Piwik\Db::exec($sql);
 			$unique = "ALTER TABLE " . Common::prefixTable('trafficsourcesprogression_sources') . " ADD UNIQUE (
-						`idsite` ,
-						`source_id` ,
-						`timeslot` ,
-						`date`
+						idsite,
+						source_id,
+						timeslot,
+						date
 						);";
             \Piwik\Db::exec($unique);
         } catch (Exception $e) {

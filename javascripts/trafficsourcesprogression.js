@@ -7,7 +7,7 @@
 
 $(function() {
 
-		var options = {
+		var actOptions = {
 			lines: {
 				show: true,
 				zero: false,
@@ -28,7 +28,32 @@ $(function() {
             	position: "nw"
             }
 		}
-
+		var histOptions = {
+				lines: {
+					show: true,
+					zero: false,
+					fill: 0 
+				},
+				points: {
+					show: false
+				},
+				xaxis: {
+					tickDecimals: 0,
+					tickSize: 0,
+					show: false
+				},
+				yaxis: {
+	            	autoscaleMargin: 0.2
+	            },
+	            legend: {
+	            	show: false
+	            }
+			}
+		var d6 = [];
+		for (var i = 1; i < 72; i += 0.5 + Math.random()) {
+			d6.push([i, Math.sqrt(2*i + Math.sin(i) + 5)]);
+		}
+		
 		var updateTrafficSourcesProgression = function (updateInterval) {
 			var alreadyFetched = {};
 	        var data = [];
@@ -48,8 +73,10 @@ $(function() {
 						data.push(value);
 					}
 				});
-	        	options.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
-				$.plot("#tsp-placeholder", data, options);
+	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
+	        	actOptions.data = data;
+	        	histOptions.data: d6;
+	        	$.plot("#tsp-placeholder", [{actOptions}, {histOptions}] );
 			});
 	        
 	        ajaxRequest.send(true);
@@ -77,8 +104,10 @@ $(function() {
 						data.push(value);
 					}
 				});
-	        	options.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
-	        	$.plot("#tsp-placeholder", data, options);
+	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
+	        	actOptions.data = data;
+	        	histOptions.data: d6;
+	        	$.plot("#tsp-placeholder", [{actOptions}, {histOptions}] );
 			});
 	        
 	        ajaxRequest.send(true);

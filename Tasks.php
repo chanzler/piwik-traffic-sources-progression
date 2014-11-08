@@ -52,6 +52,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 						WHERE idsite = ? AND timeslot = 72 AND source_id = ?
 		                ";
+				//Initialize sources
 		        $db_date = \Piwik\Db::fetchOne($db_dateSql, array($idSite, $source));
 		        if (strcmp($origin_dt->format('d.m.Y'), $db_date)!=0) {
 			        //\Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
@@ -75,6 +76,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 					$index++;
 	        	}
 	        }
+
 	        $socialSql = "SELECT referer_url, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
@@ -83,37 +85,31 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
 		                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
 		                ";
-	         
-/*			$socialSql = "SELECT referer_url, round(UNIX_TIMESTAMP(visit_first_action_time) /1200) AS timeslot
-                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-                WHERE idsite = ?
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_last_action_time
-                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) > visit_last_action_time
-                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
-            ";*/
-                
-	        /*$social = \Piwik\Db::fetchAll($socialSql, array(
-		            round($minutesToMidnight/20), $idSite, $minutesToMidnight
+	        $social = \Piwik\Db::fetchAll($socialSql, array(
+		            round($minutesToMidnight/20), $idSite, ($minutesToMidnight<100)?$minutesToMidnight:100
 	        ));
-	        //\Piwik\Db::deleteAllRows(\Piwik\Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, 10));
-	        for($i=1; $i<=72; $i++){
-	        	$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-		                     (idsite, source_id, timeslot, traffic) VALUES (?, ?, ?, ?) AND date = ?";
-				\Piwik\Db::query($insert, array(
-		            $idSite, 10, $i, 0, $origin_dt->format('d.m.Y')
-				));
+			//Initialize social
+	        $db_date = \Piwik\Db::fetchOne($db_dateSql, array($idSite, $source));
+	        if (strcmp($origin_dt->format('d.m.Y'), $db_date)!=0) {
+		        for($i=1; $i<=72; $i++){
+					$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+			                     (idsite, source_id, timeslot, traffic, date) VALUES (?, ?, ?, ?, ?)";
+					\Piwik\Db::query($insert, array(
+			            $idSite, 10, $i, 0, $origin_dt->format('d.m.Y')
+					));
+		        }
 	        }
 	        for($i=1; $i<=72; $i++){
 	        	$socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
 		        }
-				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 			               SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-				\Piwik\Db::query($insert, array(
+				\Piwik\Db::query($update, array(
 			           $socialCount, $idSite, 10, $i, $origin_dt->format('d.m.Y')
 				));
-		    }*/
+		    }
 		}
     }
 }
