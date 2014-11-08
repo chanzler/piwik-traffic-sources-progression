@@ -50,7 +50,7 @@ $(function() {
 	            }
 			}
 		var d6 = [];
-		for (var i = 1; i < 72; i += 0.5 + Math.random()) {
+		for (var i = 1; i <= 72; i += 1 + Math.random()) {
 			d6.push([i, Math.sqrt(2*i + Math.sin(i) + 5)]);
 		}
 		
@@ -75,7 +75,7 @@ $(function() {
 				});
 	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
 	        	actOptions.data = data;
-	        	histOptions.data: d6;
+	        	histOptions.data = d6;
 	        	$.plot("#tsp-placeholder", [{actOptions}, {histOptions}] );
 			});
 	        
@@ -106,7 +106,7 @@ $(function() {
 				});
 	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
 	        	actOptions.data = data;
-	        	histOptions.data: d6;
+	        	histOptions.data = d6;
 	        	$.plot("#tsp-placeholder", [{actOptions}, {histOptions}] );
 			});
 	        
