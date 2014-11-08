@@ -76,7 +76,7 @@ $(function() {
 	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
 	        	actOptions.data = data;
 	        	histOptions.data = d6;
-	        	$.plot("#tsp-placeholder", [{actOptions}, {histOptions}] );
+	        	$.plot("#tsp-placeholder", [actOptions, histOptions] );
 			});
 	        
 	        ajaxRequest.send(true);
@@ -107,7 +107,7 @@ $(function() {
 	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
 	        	actOptions.data = data;
 	        	histOptions.data = d6;
-	        	$.plot("#tsp-placeholder", [{actOptions}, {histOptions}] );
+	        	$.plot("#tsp-placeholder", [actOptions, histOptions] );
 			});
 	        
 	        ajaxRequest.send(true);
