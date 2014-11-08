@@ -109,7 +109,7 @@ class API extends \Piwik\Plugin\API {
             $idSite, $origin_dt->format('d.m.Y')
         ));
 		if (count($campaign) == 0){
-		     $clone = clone $origin-dt;    
+		     $clone = clone $origin_dt;    
 			 $clone->modify( '-1 day' );
 			 $campaignSql = "SELECT *
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
@@ -163,7 +163,7 @@ class API extends \Piwik\Plugin\API {
             $idSite, $origin_dt->format('d.m.Y')
         ));
 		if (count($direct) == 0){
-		     $clone = clone $origin-dt;    
+		     $clone = clone $origin_dt;    
 			 $clone->modify( '-1 day' );
 			 $directSql = "SELECT *
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
@@ -217,7 +217,7 @@ class API extends \Piwik\Plugin\API {
             $idSite, $origin_dt->format('d.m.Y')
         ));
 		if (count($search) == 0){
-		     $clone = clone $origin-dt;    
+		     $clone = clone $origin_dt;    
 			 $clone->modify( '-1 day' );
 			 $searchSql = "SELECT *
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
@@ -271,7 +271,7 @@ class API extends \Piwik\Plugin\API {
             $idSite, $origin_dt->format('d.m.Y')
         ));
 		if (count($website) == 0){
-		     $clone = clone $origin-dt;    
+		     $clone = clone $origin_dt;    
 			 $clone->modify( '-1 day' );
 			 $websiteSql = "SELECT *
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
@@ -324,7 +324,7 @@ class API extends \Piwik\Plugin\API {
             $idSite, $origin_dt->format('d.m.Y')
         ));
 		if (count($social) == 0){
-		    $clone = clone $origin-dt;    
+		    $clone = clone $origin_dt;    
 			$clone->modify( '-1 day' );
 			$socialSql = "SELECT *
 	                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
