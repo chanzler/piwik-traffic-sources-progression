@@ -52,7 +52,7 @@ class API extends \Piwik\Plugin\API {
     	return $needle === "" || strpos($haystack, $needle) === 0;
 	}
 
-	private static function getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, $referrerType, $label){
+	private static function getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, $referrerType){
 		$sql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
@@ -126,7 +126,7 @@ class API extends \Piwik\Plugin\API {
         $minutes = intval($origin_dt->format('i'));
         $minutesToMidnight = $minutes+($hours*60);
         
-    	$campaignSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+    	/*$campaignSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -172,7 +172,8 @@ class API extends \Piwik\Plugin\API {
 		    $campaign = \Piwik\Db::fetchAll($campaignSql, array(
 		    	$idSite, $clone->format('d.m.Y')
 	        ));
-		}
+		}*/
+		$campaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_CAMPAIGN);
 		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
         foreach ($campaign as &$value) {
 			$campaignString .= "[".$value['timeslot'].", ".$value['traffic']."],";
@@ -233,7 +234,8 @@ class API extends \Piwik\Plugin\API {
 		}
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";*/
-		$direct = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, Piwik::translate('TrafficSourcesProgression_Direct'));
+
+		$direct = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY);
 		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
         foreach ($direct as $key=>&$value) {
 			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
@@ -241,7 +243,7 @@ class API extends \Piwik\Plugin\API {
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";
 		
-    	$searchSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+/*    	$searchSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -287,7 +289,8 @@ class API extends \Piwik\Plugin\API {
 		    $search = \Piwik\Db::fetchAll($searchSql, array(
 		    	$idSite, $clone->format('d.m.Y')
 	        ));
-		}
+		}*/
+		$search = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_SEARCH_ENGINE);
 		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')."\", \"data\":[";
         foreach ($search as $key=>&$value) {
 			$searchString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
@@ -295,7 +298,7 @@ class API extends \Piwik\Plugin\API {
 		$searchString = rtrim($searchString, ",");
 		$searchString .= "]}";
 
-    	$websiteSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+    	/*$websiteSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -341,7 +344,9 @@ class API extends \Piwik\Plugin\API {
 		    $website = \Piwik\Db::fetchAll($websiteSql, array(
 		    	$idSite, $clone->format('d.m.Y')
 	        ));
-		}
+		}*/
+		
+		$website = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_WEBSITE);
 		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')."\", \"data\":[";
         foreach ($website as $key=>&$value) {
 			$websiteString .= "[".$value['timeslot'].", ".($value['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
