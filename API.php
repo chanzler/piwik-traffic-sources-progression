@@ -250,7 +250,7 @@ class API extends \Piwik\Plugin\API {
 			$historicalString .= "[".$value['timeslot'].", ".($value['traffic']+$historicalWebsite[$key]['traffic']+$historicalSearch[$key]['traffic']+$historicalCampaign[$key]['traffic']+$historicalDirect[$key]['traffic'])."],";
 		}
 		$historicalString = rtrim($historicalString, ",");
-		$historicalString .= "], \"lines\":{\"shadow\":false, \"fill\":false}}";
+		$historicalString .= "], \"lines\":{\"shadowSize\":0, \"fill\":false}}";
 
 		//return
 		$out = "{".$historicalString.",".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$campaignString."}";
