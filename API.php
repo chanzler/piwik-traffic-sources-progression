@@ -245,12 +245,12 @@ class API extends \Piwik\Plugin\API {
 		    	$idSite, $clone->format('d.m.Y')
 	        ));
 		}
-		$historicalString = "\"".Piwik::translate('TrafficSourcesProgression_Historical')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Historical')."\", \"data\":[";
+		$historicalString = "\"".Piwik::translate('TrafficSourcesProgression_Historical')."\":{\"data\":[";
         foreach ($social as $key=>&$value) {
 			$historicalString .= "[".$value['timeslot'].", ".($value['traffic']+$historicalWebsite[$key]['traffic']+$historicalSearch[$key]['traffic']+$historicalCampaign[$key]['traffic']+$historicalDirect[$key]['traffic'])."],";
 		}
 		$historicalString = rtrim($historicalString, ",");
-		$historicalString .= "]}";
+		$historicalString .= "], \"lines\":{\"shadow\":false, \"fill\":false}}";
 
 		//return
 		$out = "{".$historicalString.",".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$campaignString."}";
