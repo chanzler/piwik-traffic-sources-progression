@@ -52,7 +52,7 @@ class API extends \Piwik\Plugin\API {
     	return $needle === "" || strpos($haystack, $needle) === 0;
 	}
 
-	private static function getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, $referrerType){
+	private static function getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, $referrerType, $update){
 		$sql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
@@ -65,16 +65,18 @@ class API extends \Piwik\Plugin\API {
 		$numbers = \Piwik\Db::fetchAll($sql, array(
 				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<80)?$minutesToMidnight:80, $lastMinutes * 60
 		));
-		$index=0;
-		foreach ($numbers as &$value) {
-			if ($index > 0 || $minutesToMidnight < 20){
-				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-				\Piwik\Db::query($insert, array(
-						$value['number'], $idSite, $referrerType, $value['timeslot'], $origin_dt->format('d.m.Y')
-				));
+		if ($update){
+			$index=0;
+			foreach ($numbers as &$value) {
+				if ($index > 0 || $minutesToMidnight < 20){
+					$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+					                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
+					\Piwik\Db::query($insert, array(
+							$value['number'], $idSite, $referrerType, $value['timeslot'], $origin_dt->format('d.m.Y')
+					));
+				}
+				$index++;
 			}
-			$index++;
 		}
         $sql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
@@ -126,54 +128,8 @@ class API extends \Piwik\Plugin\API {
         $minutes = intval($origin_dt->format('i'));
         $minutesToMidnight = $minutes+($hours*60);
         
-    	/*$campaignSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
-		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
-						cross join (select @rownum := ?) s
-		                WHERE idsite = ?
-		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
-		                AND referer_type = ".Common::REFERRER_TYPE_CAMPAIGN."
-		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
-		                ";
-		$campaign = \Piwik\Db::fetchAll($campaignSql, array(
-				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<80)?$minutesToMidnight:80, $lastMinutes * 60
-		));
-		$index=0;
-		foreach ($campaign as &$value) {
-			if ($index > 0 || $minutesToMidnight < 20){
-				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-				\Piwik\Db::query($insert, array(
-						$value['number'], $idSite, Common::REFERRER_TYPE_CAMPAIGN, $value['timeslot'], $origin_dt->format('d.m.Y')
-				));
-			}
-			$index++;
-		}
-        $campaignSql = "SELECT *
-                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
-                WHERE idsite = ?
-                AND source_id = ".Common::REFERRER_TYPE_CAMPAIGN."
-                AND date = ?
-                ORDER BY timeslot ASC
-                ";
-        $campaign = \Piwik\Db::fetchAll($campaignSql, array(
-            $idSite, $origin_dt->format('d.m.Y')
-        ));
-		if (count($campaign) == 0){
-		     $clone = clone $origin_dt;    
-			 $clone->modify( '-1 day' );
-			 $campaignSql = "SELECT *
-		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
-	    	            WHERE idsite = ?
-	        	        AND source_id = ".Common::REFERRER_TYPE_CAMPAIGN."
-	            	    AND date = ?
-	                	ORDER BY timeslot ASC
-	                ";
-		    $campaign = \Piwik\Db::fetchAll($campaignSql, array(
-		    	$idSite, $clone->format('d.m.Y')
-	        ));
-		}*/
-		$campaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_CAMPAIGN);
+		//Get the actual data
+		$campaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_CAMPAIGN, true);
 		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
         foreach ($campaign as &$value) {
 			$campaignString .= "[".$value['timeslot'].", ".$value['traffic']."],";
@@ -181,61 +137,7 @@ class API extends \Piwik\Plugin\API {
 		$campaignString = rtrim($campaignString, ",");
 		$campaignString .= "]}";
 
-		/*$directSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
-		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
-						cross join (select @rownum := ?) s
-		                WHERE idsite = ?
-		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
-		                AND referer_type = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
-		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
-		                ";
-		$direct = \Piwik\Db::fetchAll($directSql, array(
-				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<80)?$minutesToMidnight:80, $lastMinutes * 60
-		));
-		$index=0;
-		foreach ($direct as &$value) {
-			if ($index > 0 || $minutesToMidnight < 20){
-				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-				\Piwik\Db::query($insert, array(
-						$value['number'], $idSite, Common::REFERRER_TYPE_DIRECT_ENTRY, $value['timeslot'], $origin_dt->format('d.m.Y')
-				));
-			}
-			$index++;
-		}
-        $directSql = "SELECT *
-                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-                WHERE idsite = ?
-                AND source_id = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
-                AND date = ?
-                ORDER BY timeslot ASC
-                ";
-        $direct = \Piwik\Db::fetchAll($directSql, array(
-            $idSite, $origin_dt->format('d.m.Y')
-        ));
-		if (count($direct) == 0){
-		     $clone = clone $origin_dt;    
-			 $clone->modify( '-1 day' );
-			 $directSql = "SELECT *
-		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
-	    	            WHERE idsite = ?
-	        	        AND source_id = ".Common::REFERRER_TYPE_DIRECT_ENTRY."
-	            	    AND date = ?
-	                	ORDER BY timeslot ASC
-	                ";
-		    $direct = \Piwik\Db::fetchAll($directSql, array(
-		    	$idSite, $clone->format('d.m.Y')
-	        ));
-		}
-		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
-        foreach ($direct as $key=>&$value) {
-			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
-		}
-		$directString = rtrim($directString, ",");
-		$directString .= "]}";*/
-
-		$direct = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY);
+		$direct = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, true);
 		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
         foreach ($direct as $key=>&$value) {
 			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
@@ -243,110 +145,15 @@ class API extends \Piwik\Plugin\API {
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";
 		
-/*    	$searchSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
-		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
-						cross join (select @rownum := ?) s
-		                WHERE idsite = ?
-		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
-		                AND referer_type = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
-		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
-		                ";
-		$search = \Piwik\Db::fetchAll($searchSql, array(
-				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<80)?$minutesToMidnight:80, $lastMinutes * 60
-		));
-		$index=0;
-		foreach ($search as &$value) {
-			if ($index > 0 || $minutesToMidnight < 20){
-				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-				\Piwik\Db::query($insert, array(
-						$value['number'], $idSite, Common::REFERRER_TYPE_SEARCH_ENGINE, $value['timeslot'], $origin_dt->format('d.m.Y')
-				));
-			}
-			$index++;
-		}
-		$searchSql = "SELECT *
-                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-                WHERE idsite = ?
-                AND source_id = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
-                AND date = ?
-                ORDER BY timeslot ASC
-                ";
-        $search = \Piwik\Db::fetchAll($searchSql, array(
-            $idSite, $origin_dt->format('d.m.Y')
-        ));
-		if (count($search) == 0){
-		     $clone = clone $origin_dt;    
-			 $clone->modify( '-1 day' );
-			 $searchSql = "SELECT *
-		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
-	    	            WHERE idsite = ?
-	        	        AND source_id = ".Common::REFERRER_TYPE_SEARCH_ENGINE."
-	            	    AND date = ?
-	                	ORDER BY timeslot ASC
-	                ";
-		    $search = \Piwik\Db::fetchAll($searchSql, array(
-		    	$idSite, $clone->format('d.m.Y')
-	        ));
-		}*/
-		$search = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_SEARCH_ENGINE);
+		$search = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_SEARCH_ENGINE, true);
 		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')."\", \"data\":[";
         foreach ($search as $key=>&$value) {
 			$searchString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
 		}
 		$searchString = rtrim($searchString, ",");
 		$searchString .= "]}";
-
-    	/*$websiteSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
-		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
-						cross join (select @rownum := ?) s
-		                WHERE idsite = ?
-		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
-		                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
-		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
-		                ";
-		$website = \Piwik\Db::fetchAll($websiteSql, array(
-				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<80)?$minutesToMidnight:80, $lastMinutes * 60
-		));
-		$index=0;
-		foreach ($website as &$value) {
-			if ($index > 0 || $minutesToMidnight < 20){
-				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-		                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-				\Piwik\Db::query($insert, array(
-						$value['number'], $idSite, Common::REFERRER_TYPE_WEBSITE, $value['timeslot'], $origin_dt->format('d.m.Y')
-				));
-			}
-			$index++;
-		}		
-		$websiteSql = "SELECT *
-                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-                WHERE idsite = ?
-                AND source_id = ".Common::REFERRER_TYPE_WEBSITE."
-                AND date = ?
-                ORDER BY timeslot ASC
-                ";
-        $website = \Piwik\Db::fetchAll($websiteSql, array(
-            $idSite, $origin_dt->format('d.m.Y')
-        ));
-		if (count($website) == 0){
-		     $clone = clone $origin_dt;    
-			 $clone->modify( '-1 day' );
-			 $websiteSql = "SELECT *
-		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
-	    	            WHERE idsite = ?
-	        	        AND source_id = ".Common::REFERRER_TYPE_WEBSITE."
-	            	    AND date = ?
-	                	ORDER BY timeslot ASC
-	                ";
-		    $website = \Piwik\Db::fetchAll($websiteSql, array(
-		    	$idSite, $clone->format('d.m.Y')
-	        ));
-		}*/
 		
-		$website = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_WEBSITE);
+		$website = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_WEBSITE, true);
 		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')."\", \"data\":[";
         foreach ($website as $key=>&$value) {
 			$websiteString .= "[".$value['timeslot'].", ".($value['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
@@ -407,7 +214,46 @@ class API extends \Piwik\Plugin\API {
 		$socialString = rtrim($socialString, ",");
 		$socialString .= "]}";
 
-		$out = "{".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$campaignString."}";
+		//Get the historical data
+		$historical_dt = clone $origin_dt;    
+		$historical_dt->modify( '-1 day' );
+		$historicalCampaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_CAMPAIGN, true);
+		$historicalDirect = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, true);
+		$historicalSearch = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_SEARCH_ENGINE, true);
+		$historicalWebsite = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_WEBSITE, true);
+		$socialSql = "SELECT *
+                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+                WHERE idsite = ?
+                AND source_id = 10
+                AND date = ?
+                ORDER BY timeslot ASC
+                ";
+        $social = \Piwik\Db::fetchAll($socialSql, array(
+            $idSite, $historical_dt->format('d.m.Y')
+        ));
+		if (count($social) == 0){
+		    $clone = clone $historical_dt;    
+			$clone->modify( '-1 day' );
+			$socialSql = "SELECT *
+	                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+	                WHERE idsite = ?
+	                AND source_id = 10
+	                AND date = ?
+	                ORDER BY timeslot ASC
+	                ";
+		    $social = \Piwik\Db::fetchAll($socialSql, array(
+		    	$idSite, $clone->format('d.m.Y')
+	        ));
+		}
+		$historicalString = "\"".Piwik::translate('TrafficSourcesProgression_Historical')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Historical')."\", \"data\":[";
+        foreach ($social as $key=>&$value) {
+			$historicalString .= "[".$value['timeslot'].", ".($value['traffic']+$historicalWebsite[$key]['traffic']+$historicalSearch[$key]['traffic']+$historicalCampaign[$key]['traffic']+$historicalDirect[$key]['traffic'])."],";
+		}
+		$historicalString = rtrim($historicalString, ",");
+		$historicalString .= "]}";
+
+		//return
+		$out = "{".$historicalString.",".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$campaignString."}";
 		return $out;
     }
 
