@@ -48,7 +48,7 @@ $(function() {
 						data.push(value);
 					}
 				});
-	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
+	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[17][0],"6h"],[data[1].data[35][0],"12h"],[data[1].data[53][0],"18h"],[data[1].data[71][0],"24h"]];
 				$.plot("#tsp-placeholder", data, actOptions);
 			});
 	        
@@ -77,7 +77,7 @@ $(function() {
 						data.push(value);
 					}
 				});
-	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[18][0],"6h"],[data[1].data[36][0],"12h"],[data[1].data[54][0],"18h"],[data[1].data[71][0],"24h"]];
+	        	actOptions.xaxis.ticks = [[data[1].data[0][0],"0h"],[data[1].data[17][0],"6h"],[data[1].data[35][0],"12h"],[data[1].data[53][0],"18h"],[data[1].data[71][0],"24h"]];
 	        	$.plot("#tsp-placeholder", data);
 			});
 	        
