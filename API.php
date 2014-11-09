@@ -100,13 +100,7 @@ class API extends \Piwik\Plugin\API {
 		    	$idSite, $clone->format('d.m.Y')
 	        ));
 		}
-		$returnString = "\"".$label."\":{\"label\":\"".$label."\", \"data\":[";
-        foreach ($numbers as &$value) {
-			$returnString .= "[".$value['timeslot'].", ".$value['traffic']."],";
-		}
-		$returnString = rtrim($returnString, ",");
-		$returnString .= "]}";
-		return $returnString;
+		return $numbers;
 	}
 		
     /**
@@ -239,7 +233,13 @@ class API extends \Piwik\Plugin\API {
 		}
 		$directString = rtrim($directString, ",");
 		$directString .= "]}";*/
-		$directString = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, Piwik::translate('TrafficSourcesProgression_Direct'));
+		$direct = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, Piwik::translate('TrafficSourcesProgression_Direct'));
+		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
+        foreach ($direct as $key=>&$value) {
+			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
+		}
+		$directString = rtrim($directString, ",");
+		$directString .= "]}";
 		
     	$searchSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
