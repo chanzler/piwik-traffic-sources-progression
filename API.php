@@ -181,7 +181,7 @@ class API extends \Piwik\Plugin\API {
 			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
 		}
 		$directString = rtrim($directString, ",");
-		$directString .= "], \"lines\": { \"show: true, fill: false\" }}";
+		$directString .= "], \"hoverable\":\"false\"}";
 		
     	$searchSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
