@@ -62,7 +62,7 @@ class API extends \Piwik\Plugin\API {
 		                AND referer_type = ".$referrerType."
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
-		$numbers = \Piwik\Db::fetchAll($campaignSql, array(
+		$numbers = \Piwik\Db::fetchAll($sql, array(
 				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<80)?$minutesToMidnight:80, $lastMinutes * 60
 		));
 		$index=0;
