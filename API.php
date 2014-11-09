@@ -51,7 +51,64 @@ class API extends \Piwik\Plugin\API {
 	private static function startsWith($haystack, $needle){
     	return $needle === "" || strpos($haystack, $needle) === 0;
 	}
-	
+
+	private static function getNumbers($idsite, $minutesToMidnight, $lastMinutes, $reftime, $origin_dt, $referrerType, $label){
+		$sql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
+						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @rownum := ?) s
+		                WHERE idsite = ?
+		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
+		                AND referer_type = ".$referrerType."
+		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
+		                ";
+		$numbers = \Piwik\Db::fetchAll($campaignSql, array(
+				round($minutesToMidnight/20), $idSite, ($minutesToMidnight<80)?$minutesToMidnight:80, $lastMinutes * 60
+		));
+		$index=0;
+		foreach ($numbers as &$value) {
+			if ($index > 0 || $minutesToMidnight < 20){
+				$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				                     SET traffic = ? WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
+				\Piwik\Db::query($insert, array(
+						$value['number'], $idSite, $referrerType, $value['timeslot'], $origin_dt->format('d.m.Y')
+				));
+			}
+			$index++;
+		}
+        $sql = "SELECT *
+                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
+                WHERE idsite = ?
+                AND source_id = ".$referrerType."
+                AND date = ?
+                ORDER BY timeslot ASC
+                ";
+        $numbers = \Piwik\Db::fetchAll($sql, array(
+            $idSite, $origin_dt->format('d.m.Y')
+        ));
+		if (count($numbers) == 0){
+		     $clone = clone $origin_dt;    
+			 $clone->modify( '-1 day' );
+			 $sql = "SELECT *
+		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "	
+	    	            WHERE idsite = ?
+	        	        AND source_id = ".Common::REFERRER_TYPE_CAMPAIGN."
+	            	    AND date = ?
+	                	ORDER BY timeslot ASC
+	                ";
+		    $numbers = \Piwik\Db::fetchAll($sql, array(
+		    	$idSite, $clone->format('d.m.Y')
+	        ));
+		}
+		$returnString = "\"".$label."\":{\"label\":\"".$label."\", \"data\":[";
+        foreach ($numbers as &$value) {
+			$returnString .= "[".$value['timeslot'].", ".$value['traffic']."],";
+		}
+		$returnString = rtrim($returnString, ",");
+		$returnString .= "]}";
+		return $returnString;
+	}
+		
     /**
      * Retrieves visit count from lastMinutes and peak visit count from lastDays
      * in lastMinutes interval for site with idSite.
@@ -129,7 +186,7 @@ class API extends \Piwik\Plugin\API {
 		$campaignString = rtrim($campaignString, ",");
 		$campaignString .= "]}";
 
-		$directSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+		/*$directSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -181,7 +238,8 @@ class API extends \Piwik\Plugin\API {
 			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
 		}
 		$directString = rtrim($directString, ",");
-		$directString .= "], \"hoverable\":\"false\"}";
+		$directString .= "]}";*/
+		$directString = getNumbers($idsite, $minutesToMidnight, $lastMinutes, $reftime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, Piwik::translate('TrafficSourcesProgression_Direct'));
 		
     	$searchSql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
