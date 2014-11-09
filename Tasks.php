@@ -89,7 +89,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		            round($minutesToMidnight/20), $idSite, ($minutesToMidnight<100)?$minutesToMidnight:100
 	        ));
 			//Initialize social
-	        $db_date = \Piwik\Db::fetchOne($db_dateSql, array($idSite, $source));
+	        $db_date = \Piwik\Db::fetchOne($db_dateSql, array($idSite, 10));
 	        if (strcmp($origin_dt->format('d.m.Y'), $db_date)!=0) {
 		        for($i=1; $i<=72; $i++){
 					$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
