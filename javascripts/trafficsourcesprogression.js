@@ -11,9 +11,9 @@ $(function() {
 			lines: {
 				show: true,
 				zero: false,
-				fill: 1,
-				shadowSize: 0
+				fill: 1
 			},
+			shadowSize: 0,
 			points: {
 				show: false
 			},
