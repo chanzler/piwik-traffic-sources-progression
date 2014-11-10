@@ -253,7 +253,7 @@ class API extends \Piwik\Plugin\API {
 		$historicalString .= "], \"shadowSize\":0, \"color\":\"#999\", \"lines\":{\"fill\":false}}";
 
 		//return
-		$out = "{".$historicalString.",".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$campaignString."}";
+		$out = "{".$socialString.",".$websiteString.",".$searchString.",".$directString.",".$campaignString.", ".$historicalString."}";
 		return $out;
     }
 
