@@ -54,8 +54,9 @@ class TrafficSourcesProgression extends \Piwik\Plugin
                         idsite INT( 10 ) NOT NULL ,
                         source_id INT( 10 ) NOT NULL ,
                         timeslot INT( 10 ) NOT NULL ,
-                        traffic INT( 11 ) NOT NULL,
-                        date VARCHAR( 10 ) NOT NULL
+                        traffic INT( 11 ) NOT NULL DEFAULT '0',
+                        date VARCHAR( 10 ) NOT NULL,
+                        processed INT( 1 ) NOT NULL DEFAULT '0'
             		)";
             \Piwik\Db::exec($sql);
 			$unique = "ALTER TABLE " . Common::prefixTable('trafficsourcesprogression_sources') . " ADD UNIQUE (
@@ -83,9 +84,9 @@ class TrafficSourcesProgression extends \Piwik\Plugin
 		        \Piwik\Db::deleteAllRows(Common::prefixTable('trafficsourcesprogression_sources'), "WHERE idsite = ? AND source_id = ?", "", 100000, array($idSite, $source));
 				for($i=1; $i<=72; $i++){
 					$insert = "INSERT INTO ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-				               (idsite, source_id, timeslot, traffic, date) VALUES (?, ?, ?, ?, ?)";
+				               (idsite, source_id, timeslot, traffic, date, processed) VALUES (?, ?, ?, ?, ?, ?)";
 					\Piwik\Db::query($insert, array(
-				        $idSite, $source, $i, 0, $origin_dt->format('d.m.Y')
+				        $idSite, $source, $i, 0, $origin_dt->format('d.m.Y'), 0
 					));
 				}
 	        }
