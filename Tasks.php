@@ -74,7 +74,6 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        }
 		        $index = 0;
 		        foreach ($result as &$value) {
-		        	print_r ($value);
 					//if ($index > 0){
 			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
