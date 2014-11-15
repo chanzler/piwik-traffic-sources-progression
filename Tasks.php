@@ -44,7 +44,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        $lastProcessedTimeslot = \Piwik\Db::fetchOne($lastProcessedTimeslotSql, array(
 		            $idSite, $origin_dt->format('d.m.Y')
 		        ));
-				$sql = "SELECT COUNT(*) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+				$sql = "SELECT COUNT(*) AS number, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)+1) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -74,6 +74,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        }
 		        $index = 0;
 		        foreach ($result as &$value) {
+		        	print_r ($value);
 					//if ($index > 0){
 			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
