@@ -33,7 +33,7 @@ class Tasks extends \Piwik\Plugin\Tasks
  	        $hours = intval($origin_dt->format('H'));
 			$minutes = intval($origin_dt->format('i'));
 			$minutesToMidnight = $minutes+($hours*60);
-			$statTimeSlot = ceil($minutesToMidnight/20);
+			$statTimeSlot = ceil($minutesToMidnight/20)-1;
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
 				$lastProcessedTimeslotSql = "SELECT MIN(timeslot)
