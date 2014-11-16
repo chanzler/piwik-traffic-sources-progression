@@ -72,6 +72,7 @@ echo (($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessed
 echo ($lastMinutes * 60);
 echo ($statTimeSlot);
 echo ($lastProcessedTimeslot);
+echo ($refTime);
 			//$index=0;
 			foreach ($numbers as &$value) {
 				//if ($index >= 0 || $minutesToMidnight < 20){
