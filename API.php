@@ -66,12 +66,22 @@ class API extends \Piwik\Plugin\API {
 			$numbers = \Piwik\Db::fetchAll($sql, array(
 		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20), $lastMinutes * 60
 			));
+echo ($statTimeSlot);
+echo ($idSite);
+echo (($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20));
+echo ($lastMinutes * 60);
+echo ($statTimeSlot);
+echo ($lastProcessedTimeslot);
+			//$index=0;
 			foreach ($numbers as &$value) {
+				//if ($index >= 0 || $minutesToMidnight < 20){
 					$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 					                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 					\Piwik\Db::query($insert, array(
 							$value['number'], $idSite, $referrerType, $value['timeslot'], $origin_dt->format('d.m.Y')
 					));
+				//}
+				//$index++;
 			}
 	        for($i=1; $i<=$statTimeSlot; $i++){
 	        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
