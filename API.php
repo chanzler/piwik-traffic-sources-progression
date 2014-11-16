@@ -54,7 +54,7 @@ class API extends \Piwik\Plugin\API {
 
 	private static function getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, $referrerType, $update, $statTimeSlot, $lastProcessedTimeslot){
 		if ($update){
-			$sql = "SELECT COUNT(idvisit) AS number, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+			$sql = "SELECT COUNT(idvisit) AS number, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)+1) AS timeslot
 			                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 							cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 							cross join (select @rownum := ?) s
@@ -178,7 +178,7 @@ class API extends \Piwik\Plugin\API {
 		$websiteString = rtrim($websiteString, ",");
 		$websiteString .= "]}";
 
-    	$socialSql = "SELECT referer_url, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+    	$socialSql = "SELECT referer_url, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)+1) AS timeslot
 		            FROM " . \Piwik\Common::prefixTable("log_visit") . "
 					cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 					cross join (select @rownum := ?) s

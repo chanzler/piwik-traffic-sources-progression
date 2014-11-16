@@ -93,7 +93,7 @@ class Tasks extends \Piwik\Plugin\Tasks
     	    	}
 	        }
 
-	        $socialSql = "SELECT referer_url, round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum) AS timeslot
+	        $socialSql = "SELECT referer_url, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)+1) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
