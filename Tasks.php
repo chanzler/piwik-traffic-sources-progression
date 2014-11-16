@@ -47,7 +47,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        ));
 				if ($lastProcessedTimeslot == null) $lastProcessedTimeslot = 72;
 				
-				$sql = "SELECT COUNT(*) AS number, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)+1) AS timeslot
+				$sql = "SELECT COUNT(*) AS number, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -91,7 +91,7 @@ class Tasks extends \Piwik\Plugin\Tasks
     	    	}
 	        }
 
-	        $socialSql = "SELECT referer_url, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)+1) AS timeslot
+	        $socialSql = "SELECT referer_url, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
