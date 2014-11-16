@@ -45,6 +45,8 @@ class Tasks extends \Piwik\Plugin\Tasks
 		        $lastProcessedTimeslot = \Piwik\Db::fetchOne($lastProcessedTimeslotSql, array(
 		            $idSite, $origin_dt->format('d.m.Y')
 		        ));
+				if ($lastProcessedTimeslot == null) $lastProcessedTimeslot = 72;
+				
 				$sql = "SELECT COUNT(*) AS number, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)+1) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
