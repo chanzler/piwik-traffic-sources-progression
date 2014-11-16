@@ -66,6 +66,10 @@ class API extends \Piwik\Plugin\API {
 			$numbers = \Piwik\Db::fetchAll($sql, array(
 		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20), $lastMinutes * 60
 			));
+echo ($statTimeSlot);
+echo ($idSite);
+echo (($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20));
+echo ($lastMinutes * 60);
 			//$index=0;
 			foreach ($numbers as &$value) {
 				//if ($index >= 0 || $minutesToMidnight < 20){
