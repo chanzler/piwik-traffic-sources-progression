@@ -81,7 +81,7 @@ class API extends \Piwik\Plugin\API {
 	        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     SET processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 				\Piwik\Db::query($update, array(
-		            $idSite, $source, $i, $origin_dt->format('d.m.Y')
+		            $idSite, $referrerType, $i, $origin_dt->format('d.m.Y')
 				));
    	    	}
 		}
