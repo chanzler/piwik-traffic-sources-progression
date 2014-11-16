@@ -67,12 +67,20 @@ class API extends \Piwik\Plugin\API {
 		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20), $lastMinutes * 60
 			));
 echo ($statTimeSlot);
+echo ("#");
 echo ($idSite);
+echo ("#");
 echo (($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20));
+echo ("#");
 echo ($lastMinutes * 60);
+echo ("#");
 echo ($statTimeSlot);
+echo ("#");
 echo ($lastProcessedTimeslot);
+echo ("#");
 echo ($refTime);
+echo ("#");
+echo ("#");
 			//$index=0;
 			foreach ($numbers as &$value) {
 				//if ($index >= 0 || $minutesToMidnight < 20){
