@@ -80,7 +80,7 @@ echo ($lastProcessedTimeslot);
 echo ("#");
 echo ($refTime);
 echo ("#");
-echo ($origin_dt->format('d.m.Y'));
+echo ($origin_dt->format('d.m.Y H:i:s'));
 echo ("#");
 echo ("#");*/
 			//$index=0;
@@ -162,7 +162,11 @@ echo ("#");*/
         $lastProcessedTimeslot = \Piwik\Db::fetchOne($lastProcessedTimeslotSql, array(
             $idSite, $origin_dt->format('d.m.Y')
         ));
-		if ($lastProcessedTimeslot == null) $lastProcessedTimeslot = 72;
+		if ($lastProcessedTimeslot == null){
+			$lastProcessedTimeslot = 72;
+		} else {
+			$lastProcessedTimeslot--;
+		}
         
 		//Get the actual data
 		$campaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_CAMPAIGN, true, $statTimeSlot, $lastProcessedTimeslot);
