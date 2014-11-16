@@ -234,10 +234,10 @@ class API extends \Piwik\Plugin\API {
 		//Get the historical data
 		$historical_dt = clone $origin_dt;    
 		$historical_dt->modify( '-1 day' );
-		$historicalCampaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_CAMPAIGN, false);
-		$historicalDirect = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, false);
-		$historicalSearch = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_SEARCH_ENGINE, false);
-		$historicalWebsite = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_WEBSITE, false);
+		$historicalCampaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_CAMPAIGN, false, $statTimeSlot, $lastProcessedTimeslot);
+		$historicalDirect = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, false, $statTimeSlot, $lastProcessedTimeslot);
+		$historicalSearch = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_SEARCH_ENGINE, false, $statTimeSlot, $lastProcessedTimeslot);
+		$historicalWebsite = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $historical_dt, Common::REFERRER_TYPE_WEBSITE, false, $statTimeSlot, $lastProcessedTimeslot);
 		$socialSql = "SELECT *
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
                 WHERE idsite = ?
