@@ -33,7 +33,7 @@ class Tasks extends \Piwik\Plugin\Tasks
  	        $hours = intval($origin_dt->format('H'));
 			$minutes = intval($origin_dt->format('i'));
 			$minutesToMidnight = $minutes+($hours*60);
-			$statTimeSlot = round($minutesToMidnight/20);
+			$statTimeSlot = ceil($minutesToMidnight/20);
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
 				$lastProcessedTimeslotSql = "SELECT MIN(timeslot)
@@ -73,16 +73,12 @@ class Tasks extends \Piwik\Plugin\Tasks
 						));
 			        }
 		        }
-		        //$index = 0;
 		        foreach ($result as &$value) {
-					//if ($index > 0){
-			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-				                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-						\Piwik\Db::query($insert, array(
-				            $value['number'], $idSite, $source, $value['timeslot'], $origin_dt->format('d.m.Y')
-						));
-					//}
-					//$index++;
+		        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+			                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
+					\Piwik\Db::query($insert, array(
+			            $value['number'], $idSite, $source, $value['timeslot'], $origin_dt->format('d.m.Y')
+					));
 	        	}
 		        for($i=1; $i<=$statTimeSlot; $i++){
 		        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
