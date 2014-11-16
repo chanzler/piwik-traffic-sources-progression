@@ -80,6 +80,8 @@ echo ($lastProcessedTimeslot);
 echo ("#");
 echo ($refTime);
 echo ("#");
+echo ($origin_dt->format('d.m.Y'));
+echo ("#");
 echo ("#");
 			//$index=0;
 			foreach ($numbers as &$value) {
