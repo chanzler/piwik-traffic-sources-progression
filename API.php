@@ -152,6 +152,7 @@ echo ("#");
         $minutes = intval($origin_dt->format('i'));
         $minutesToMidnight = $minutes+($hours*60);
 		$statTimeSlot = ceil($minutesToMidnight/20);
+		
 		$lastProcessedTimeslotSql = "SELECT MIN(timeslot)
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				WHERE idsite = ?
@@ -161,6 +162,7 @@ echo ("#");
         $lastProcessedTimeslot = \Piwik\Db::fetchOne($lastProcessedTimeslotSql, array(
             $idSite, $origin_dt->format('d.m.Y')
         ));
+		if ($lastProcessedTimeslot == null) $lastProcessedTimeslot = 72;
         
 		//Get the actual data
 		$campaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_CAMPAIGN, true, $statTimeSlot, $lastProcessedTimeslot);
