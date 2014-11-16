@@ -130,7 +130,7 @@ class API extends \Piwik\Plugin\API {
         $hours = intval($origin_dt->format('H'));
         $minutes = intval($origin_dt->format('i'));
         $minutesToMidnight = $minutes+($hours*60);
-		$statTimeSlot = ceil($minutesToMidnight/20)-1;
+		$statTimeSlot = ceil($minutesToMidnight/20);
 		$lastProcessedTimeslotSql = "SELECT MIN(timeslot)
                 FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				WHERE idsite = ?
