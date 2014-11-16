@@ -73,7 +73,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 						));
 			        }
 		        }
-		        $index = 0;
+		        //$index = 0;
 		        foreach ($result as &$value) {
 					//if ($index > 0){
 			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
@@ -82,7 +82,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 				            $value['number'], $idSite, $source, $value['timeslot'], $origin_dt->format('d.m.Y')
 						));
 					//}
-					$index++;
+					//$index++;
 	        	}
 		        for($i=1; $i<=$statTimeSlot; $i++){
 		        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
@@ -115,7 +115,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 					));
 		        }
 	        }
-	        for($i=1; $i<=$statTimeSlot; $i++){
+	        for($i=$lastProcessedTimeslot-1; $i<=$statTimeSlot; $i++){
 	        	$socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
