@@ -83,16 +83,16 @@ echo ("#");
 echo ($origin_dt->format('d.m.Y H:i:s'));
 echo ("#");
 echo ("#");*/
-			//$index=0;
+			$index=0;
 			foreach ($numbers as &$value) {
-				//if ($index >= 0 || $minutesToMidnight < 20){
+				if ($index > 0 || $minutesToMidnight < 20){
 					$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 					                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 					\Piwik\Db::query($insert, array(
 							$value['number'], $idSite, $referrerType, $value['timeslot'], $origin_dt->format('d.m.Y')
 					));
-				//}
-				//$index++;
+				}
+				$index++;
 			}
 	        for($i=1; $i<=$statTimeSlot; $i++){
 	        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "

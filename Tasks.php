@@ -79,12 +79,16 @@ class Tasks extends \Piwik\Plugin\Tasks
 						));
 			        }
 		        }
+		        $index=0;
 		        foreach ($result as &$value) {
-		        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
-			                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
-					\Piwik\Db::query($insert, array(
-			            $value['number'], $idSite, $source, $value['timeslot'], $origin_dt->format('d.m.Y')
-					));
+					if ($index > 0){
+			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
+				                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
+						\Piwik\Db::query($insert, array(
+				            $value['number'], $idSite, $source, $value['timeslot'], $origin_dt->format('d.m.Y')
+						));
+						$index++;
+					}
 	        	}
 		        for($i=1; $i<=$statTimeSlot; $i++){
 		        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
