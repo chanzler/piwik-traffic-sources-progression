@@ -61,7 +61,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		        $result = \Piwik\Db::fetchAll($sql, array(
-		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20), $lastMinutes * 60
+		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+40), $lastMinutes * 60
 		        ));
 		        $db_dateSql = "SELECT MAX(date)
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
@@ -108,7 +108,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 		                AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
 		                ";
 	        $social = \Piwik\Db::fetchAll($socialSql, array(
-		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20)
+		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+40)
 	        ));
 			//Initialize social
 	        $db_date = \Piwik\Db::fetchOne($db_dateSql, array($idSite, 10));
@@ -121,7 +121,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 					));
 		        }
 	        }
-	        for($i=$lastProcessedTimeslot-1; $i<=$statTimeSlot; $i++){
+	        for($i=$lastProcessedTimeslot; $i<=$statTimeSlot; $i++){
 	        	$socialCount = 0;
 	            foreach ($social as &$value) {
 	        		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;

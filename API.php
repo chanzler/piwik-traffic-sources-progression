@@ -64,7 +64,7 @@ class API extends \Piwik\Plugin\API {
 			                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 			                ";
 			$numbers = \Piwik\Db::fetchAll($sql, array(
-		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20), $lastMinutes * 60
+		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+40), $lastMinutes * 60
 			));
 /*echo ($statTimeSlot);
 echo ("#");
@@ -210,9 +210,9 @@ echo ("#");*/
 		            AND referer_type = ".Common::REFERRER_TYPE_WEBSITE."
 		            ";
 	    $social = \Piwik\Db::fetchAll($socialSql, array(
-	            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20)
+	            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+40)
 	    ));
-        for($i=$lastProcessedTimeslot-1; $i<=$statTimeSlot; $i++){
+        for($i=$lastProcessedTimeslot; $i<=$statTimeSlot; $i++){
 	       	$socialCount = 0;
 	        foreach ($social as &$value) {
 	       		if(API::isSocialUrl($value['referer_url']) && $i==$value['timeslot']) $socialCount++;
