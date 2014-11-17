@@ -53,7 +53,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 				
 				$sql = "SELECT COUNT(*) AS number, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)-1) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @timenum := ceil(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
 		                WHERE idsite = ?
 		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
@@ -101,7 +101,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 
 	        $socialSql = "SELECT referer_url, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)-1) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
-						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
+						cross join (select @timenum := ceil(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
 		                WHERE idsite = ?
 		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
