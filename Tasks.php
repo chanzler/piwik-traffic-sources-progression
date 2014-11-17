@@ -81,8 +81,9 @@ class Tasks extends \Piwik\Plugin\Tasks
 			        }
 		        }
 echo ("    ");
-echo (count($result));
-echo ("#");
+echo (count($result)."\n");
+print_r($result);
+echo ("\n#");
 echo ($idSite);
 echo ("#");
 echo (($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20));
