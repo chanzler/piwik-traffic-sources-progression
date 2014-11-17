@@ -100,6 +100,8 @@ echo ("#\n");
 		        $index=0;
 		        foreach ($result as &$value) {
 					if ($index > 0){
+echo ("      ");
+echo ($value['timeslot'].":".$value['number']);
 			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 						\Piwik\Db::query($insert, array(
