@@ -23,6 +23,7 @@ class Tasks extends \Piwik\Plugin\Tasks
        	foreach (API::getSites() as $site)
         {
 			$idSite = $site['id'];
+        	echo ("Processing idSite ".$idSite."\n");
 	        $lastMinutes = 20;
 			$timeZoneDiff = API::get_timezone_offset('UTC', Site::getTimezoneFor($idSite));
 			$origin_dtz = new \DateTimeZone(Site::getTimezoneFor($idSite));
@@ -36,6 +37,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 			$statTimeSlot = ceil($minutesToMidnight/20);
 	        $sources = array(Common::REFERRER_TYPE_DIRECT_ENTRY, Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE, Common::REFERRER_TYPE_CAMPAIGN);
 			foreach($sources as &$source) {
+	        	echo ("  Processing source ".$source."\n");
 				$lastProcessedTimeslotSql = "SELECT MIN(timeslot)
 		                FROM " . \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 						WHERE idsite = ?
@@ -79,6 +81,23 @@ class Tasks extends \Piwik\Plugin\Tasks
 						));
 			        }
 		        }
+echo ("    ");
+echo ($statTimeSlot);
+echo ("#");
+echo ($idSite);
+echo ("#");
+echo (($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+20));
+echo ("#");
+echo ($lastMinutes * 60);
+echo ("#");
+echo ($statTimeSlot);
+echo ("#");
+echo ($lastProcessedTimeslot);
+echo ("#");
+echo ($refTime);
+echo ("#");
+echo ($origin_dt->format('d.m.Y H:i:s'));
+echo ("#\n");
 		        $index=0;
 		        foreach ($result as &$value) {
 					if ($index > 0){
