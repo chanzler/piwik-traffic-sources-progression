@@ -51,14 +51,14 @@ class Tasks extends \Piwik\Plugin\Tasks
 					$lastProcessedTimeslot--;
 				}
 				
-				$sql = "SELECT COUNT(*) AS number, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)) AS timeslot
+				$sql = "SELECT COUNT(*) AS number, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)-1) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
 		                WHERE idsite = ?
 		                AND DATE_SUB('".$refTime."', INTERVAL ? MINUTE) < visit_first_action_time
 		                AND referer_type = ".$source."
-		                GROUP BY round(UNIX_TIMESTAMP(visit_first_action_time) / ?)
+		                GROUP BY ceil(UNIX_TIMESTAMP(visit_first_action_time) / ?)
 		                ";
 		        $result = \Piwik\Db::fetchAll($sql, array(
 		            $statTimeSlot, $idSite, ($minutesToMidnight<20)?$minutesToMidnight:((($statTimeSlot-$lastProcessedTimeslot)*20)+40), $lastMinutes * 60
@@ -99,7 +99,7 @@ class Tasks extends \Piwik\Plugin\Tasks
     	    	}
 	        }
 
-	        $socialSql = "SELECT referer_url, (round(round(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)) AS timeslot
+	        $socialSql = "SELECT referer_url, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)-1) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := round(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
