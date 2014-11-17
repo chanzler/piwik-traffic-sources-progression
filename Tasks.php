@@ -80,7 +80,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 						));
 			        }
 		        }
-echo ("    ");
+/*echo ("    ");
 echo (count($result)."\n");
 print_r($result);
 echo ("\n#");
@@ -97,19 +97,19 @@ echo ("#");
 echo ($refTime);
 echo ("#");
 echo ($origin_dt->format('d.m.Y H:i:s'));
-echo ("#\n");
+echo ("#\n");*/
 		        $index=0;
 		        foreach ($result as &$value) {
 					if ($index > 0 || $minutesToMidnight < 20){
-echo ("      ");
-echo ($value['timeslot'].":".$value['number']);
+//echo ("      ");
+//echo ($value['timeslot'].":".$value['number']);
 			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 				                     SET traffic = ?, processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 						\Piwik\Db::query($insert, array(
 				            $value['number'], $idSite, $source, $value['timeslot'], $origin_dt->format('d.m.Y')
 						));
-						$index++;
 					}
+					$index++;
 	        	}
 		        for($i=1; $i<$statTimeSlot; $i++){
 		        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
