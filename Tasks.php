@@ -99,7 +99,7 @@ echo ($origin_dt->format('d.m.Y H:i:s'));
 echo ("#\n");
 		        $index=0;
 		        foreach ($result as &$value) {
-					if ($index > 0){
+					if ($index > 0 || $minutesToMidnight < 20){
 echo ("      ");
 echo ($value['timeslot'].":".$value['number']);
 			        	$insert = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
