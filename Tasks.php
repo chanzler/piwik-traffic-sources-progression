@@ -81,7 +81,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 			        }
 		        }
 echo ("    ");
-echo ($statTimeSlot);
+echo (count($result));
 echo ("#");
 echo ($idSite);
 echo ("#");
