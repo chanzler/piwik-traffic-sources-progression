@@ -53,7 +53,7 @@ class Tasks extends \Piwik\Plugin\Tasks
 					$lastProcessedTimeslot--;
 				}
 				
-				$sql = "SELECT COUNT(idvisit) AS number, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)-1) AS timeslot
+				$sql = "SELECT COUNT(idvisit) AS number, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := ceil(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
@@ -120,7 +120,7 @@ echo ("#\n");*/
     	    	}
 	        }
 
-	        $socialSql = "SELECT referer_url, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)-1) AS timeslot
+	        $socialSql = "SELECT referer_url, (ceil(ceil(UNIX_TIMESTAMP(visit_first_action_time) /1200) - @timenum  + @rownum)) AS timeslot
 		                FROM " . \Piwik\Common::prefixTable("log_visit") . "
 						cross join (select @timenum := ceil(UNIX_TIMESTAMP('".$refTime."') /1200)) r
 						cross join (select @rownum := ?) s
