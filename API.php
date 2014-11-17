@@ -94,7 +94,7 @@ echo ("#");*/
 				}
 				$index++;
 			}
-	        for($i=1; $i<=$statTimeSlot; $i++){
+	        for($i=1; $i<$statTimeSlot; $i++){
 	        	$update = "UPDATE ". \Piwik\Common::prefixTable("trafficsourcesprogression_sources") . "
 		                     SET processed = 1 WHERE idsite = ? AND source_id = ? AND timeslot = ? AND date = ?";
 				\Piwik\Db::query($update, array(
