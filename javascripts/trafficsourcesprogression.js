@@ -31,7 +31,7 @@ $(function() {
 		crosshair : {
 			mode : "x",
 			color: "rgba(170, 0, 0, 0.40)",
-            lineWidth: 10
+            lineWidth: 4
 		},
 		legend : {
 			position : "nw"
@@ -69,20 +69,13 @@ $(function() {
 					break;
 				}
 			}
-
-			// Now Interpolate
-
-			var y, p1 = series.data[j - 1], p2 = series.data[j];
-
-			if (p1 == null) {
-				y = p2[1];
-			} else if (p2 == null) {
-				y = p1[1];
+			if (i == 0){
+				legendData = series.data[j][1];
 			} else {
-				y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+				legendData = series.data[j][1] - series.data[j-1][1];
 			}
-
-			legends.eq(i).text(series.label.replace(/=.*/, "= " + p2[1].toFixed(0)));
+			console.log(series.label)
+			legends.eq(i).text(series.label.replace(/=.*/, "= " + legendData.toFixed(0)));
 		}
 	}
 
@@ -174,7 +167,6 @@ $(function() {
 				latestPosition = pos;
 				if ( item ) {
 					// Lock the crosshair to the data point being hovered
-					console.log(item)
 					plot.lockCrosshair({
 						x: item.datapoint[ 0 ],
 						y: item.datapoint[ 1 ]
