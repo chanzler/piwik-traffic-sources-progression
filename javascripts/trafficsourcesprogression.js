@@ -80,7 +80,7 @@ $(function() {
 				y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
 			}
 
-			legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(0)));
+			legends.eq(i).text(series.label.replace(/=.*/, "= " + p2.toFixed(0)));
 		}
 	}
 
