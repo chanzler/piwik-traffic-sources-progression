@@ -18,25 +18,23 @@ use Piwik\Settings\Manager as SettingsManager;
 /**
  *
  */
-class Controller extends \Piwik\Plugin\Controller
-{
+class Controller extends \Piwik\Plugin\Controller {
 
-    private function getPluginSettings()
-    {
-        $pluginsSettings = SettingsManager::getPluginSettingsForCurrentUser();
-        ksort($pluginsSettings);
-        return $pluginsSettings;
-    }
+	private function getPluginSettings() {
+		$pluginsSettings = SettingsManager::getPluginSettingsForCurrentUser();
+		ksort($pluginsSettings);
+		return $pluginsSettings;
+	}
 
-    public function index()
-    {
+	public function index() {
 		$settings = new Settings('TrafficSourcesProgression');
 
-        $view = new View('@TrafficSourcesProgression/index.twig');
-        $this->setBasicVariablesView($view);
-        $view->idSite = $this->idSite;
-        $view->refreshInterval = (int)$settings->refreshInterval->getValue();
+		$view = new View('@TrafficSourcesProgression/index.twig');
+		$this -> setBasicVariablesView($view);
+		$view -> idSite = $this -> idSite;
+		$view -> refreshInterval = (int)$settings -> refreshInterval -> getValue();
 
-        return $view->render();
-    }
+		return $view -> render();
+	}
+
 }
