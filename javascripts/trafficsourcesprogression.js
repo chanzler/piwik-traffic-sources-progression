@@ -69,10 +69,10 @@ $(function() {
 					break;
 				}
 			}
-			if (i == 0){
+			if (i == series.data.length){
 				legendData = series.data[j][1];
 			} else {
-				legendData = series.data[j-1][1] - series.data[j][1];
+				legendData = series.data[j][1] - series.data[j+1][1];
 			}
 			console.log(series.data[j])
 			legends.eq(i).text(series.label.replace(/=.*/, "= " + legendData.toFixed(0)));
