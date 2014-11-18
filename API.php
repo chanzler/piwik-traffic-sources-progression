@@ -170,7 +170,7 @@ echo ("#");*/
         
 		//Get the actual data
 		$campaign = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_CAMPAIGN, true, $statTimeSlot, $lastProcessedTimeslot);
-		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\", \"data\":[";
+		$campaignString = "\"".Piwik::translate('TrafficSourcesProgression_Campaign')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Campaign')." = \", \"data\":[";
         foreach ($campaign as &$value) {
 			$campaignString .= "[".$value['timeslot'].", ".$value['traffic']."],";
 		}
@@ -178,7 +178,7 @@ echo ("#");*/
 		$campaignString .= "]}";
 
 		$direct = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_DIRECT_ENTRY, true, $statTimeSlot, $lastProcessedTimeslot);
-		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')."\", \"data\":[";
+		$directString = "\"".Piwik::translate('TrafficSourcesProgression_Direct')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Direct')." = \", \"data\":[";
         foreach ($direct as $key=>&$value) {
 			$directString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic'])."],";
 		}
@@ -186,7 +186,7 @@ echo ("#");*/
 		$directString .= "]}";
 		
 		$search = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_SEARCH_ENGINE, true, $statTimeSlot, $lastProcessedTimeslot);
-		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')."\", \"data\":[";
+		$searchString = "\"".Piwik::translate('TrafficSourcesProgression_Search')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Search')." = \", \"data\":[";
         foreach ($search as $key=>&$value) {
 			$searchString .= "[".$value['timeslot'].", ".($value['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
 		}
@@ -194,7 +194,7 @@ echo ("#");*/
 		$searchString .= "]}";
 		
 		$website = API::getNumbers($idSite, $minutesToMidnight, $lastMinutes, $refTime, $origin_dt, Common::REFERRER_TYPE_WEBSITE, true, $statTimeSlot, $lastProcessedTimeslot);
-		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')."\", \"data\":[";
+		$websiteString = "\"".Piwik::translate('TrafficSourcesProgression_Links')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Links')." = \", \"data\":[";
         foreach ($website as $key=>&$value) {
 			$websiteString .= "[".$value['timeslot'].", ".($value['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
 		}
@@ -247,7 +247,7 @@ echo ("#");*/
 		    	$idSite, $clone->format('d.m.Y')
 	        ));
 		}
-		$socialString = "\"".Piwik::translate('TrafficSourcesProgression_Social')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Social')."\", \"data\":[";
+		$socialString = "\"".Piwik::translate('TrafficSourcesProgression_Social')."\":{\"label\":\"".Piwik::translate('TrafficSourcesProgression_Social')." = \", \"data\":[";
         foreach ($social as $key=>&$value) {
 			$socialString .= "[".$value['timeslot'].", ".($value['traffic']+$website[$key]['traffic']+$search[$key]['traffic']+$campaign[$key]['traffic']+$direct[$key]['traffic'])."],";
 		}

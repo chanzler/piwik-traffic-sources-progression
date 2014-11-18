@@ -35,17 +35,17 @@ $(function() {
 			position : "nw"
 		}
 	}
-	var legends = $("#tsp-placeholder").find(".legendLabel");
-
-	legends.each(function () {
-		// fix the widths so they don't jump around
-		$(this).css('width', $(this).width());
-	});
+	var legends = null;
 	var plot = null;
 	var updateLegendTimeout = null;
 	var latestPosition = null;
 
 	function updateLegend() {
+		legends = $("#tsp-placeholder .legendLabel");
+		legends.each(function () {
+			// fix the widths so they don't jump around
+			$(this).css('width', $(this).width()+100);
+		});
 		updateLegendTimeout = null;
 
 		var pos = latestPosition;
@@ -56,7 +56,7 @@ $(function() {
 		}
 
 		var i, j, dataset = plot.getData();
-		for (i = 0; i < dataset.length; ++i) {
+		for (i = 0; i < dataset.length-1; ++i) {
 
 			var series = dataset[i];
 
@@ -71,7 +71,6 @@ $(function() {
 			// Now Interpolate
 
 			var y, p1 = series.data[j - 1], p2 = series.data[j];
-			console.log(p1);
 
 			if (p1 == null) {
 				y = p2[1];
@@ -81,7 +80,7 @@ $(function() {
 				y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
 			}
 
-			legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(2)));
+			legends.eq(i).text(series.label.replace(/=.*/, "= " + y));
 		}
 	}
 
