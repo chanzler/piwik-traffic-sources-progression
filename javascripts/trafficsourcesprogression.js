@@ -74,7 +74,6 @@ $(function() {
 			} else {
 				legendData = series.data[j][1] - dataset[i+1].data[j][1];
 			}
-			console.log(j+" : "+series.data[j])
 			legends.eq(i).text(series.label.replace(/=.*/, "= " + legendData.toFixed(0)));
 		}
 	}
