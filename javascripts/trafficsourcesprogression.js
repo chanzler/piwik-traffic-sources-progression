@@ -29,7 +29,9 @@ $(function() {
 			autoHighlight: false
 		},
 		crosshair : {
-			mode : "x"
+			mode : "x",
+			color: "rgba(170, 0, 0, 0.40)",
+            lineWidth: 10
 		},
 		legend : {
 			position : "nw"
@@ -115,6 +117,16 @@ $(function() {
 			plot = $.plot("#tsp-placeholder", data, actOptions);
 			$("#tsp-placeholder").bind("plothover", function(event, pos, item) {
 				latestPosition = pos;
+				if ( item ) {
+					// Lock the crosshair to the data point being hovered
+					plot.lockCrosshair({
+						x: item.datapoint[ 0 ],
+						y: item.datapoint[ 1 ]
+					});
+				} else {
+					// Return normal crosshair operation
+					plot.unlockCrosshair();
+				}
 				if (!updateLegendTimeout) {
 					updateLegendTimeout = setTimeout(updateLegend, 50);
 				}
@@ -160,6 +172,17 @@ $(function() {
 			plot = $.plot("#tsp-placeholder", data, actOptions);
 			$("#tsp-placeholder").bind("plothover", function(event, pos, item) {
 				latestPosition = pos;
+				if ( item ) {
+					// Lock the crosshair to the data point being hovered
+					console.log(item)
+					plot.lockCrosshair({
+						x: item.datapoint[ 0 ],
+						y: item.datapoint[ 1 ]
+					});
+				} else {
+					// Return normal crosshair operation
+					plot.unlockCrosshair();
+				}
 				if (!updateLegendTimeout) {
 					updateLegendTimeout = setTimeout(updateLegend, 50);
 				}
