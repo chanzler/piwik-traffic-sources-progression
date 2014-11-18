@@ -72,10 +72,10 @@ $(function() {
 			if (i == dataset.length-2){
 				legendData = series.data[j][1];
 			} else {
-				legendData = series.data[j][1] - dataset.[i+1].data[j][1];
+				legendData = series.data[j][1] - dataset[i+1].data[j][1];
 			}
 			console.log(j+" : "+series.data[j])
-			legends.eq(i).text(series.label.replace(/=.*/, "= " + series.data[j][1].toFixed(0)));
+			legends.eq(i).text(series.label.replace(/=.*/, "= " + legendData.toFixed(0)));
 		}
 	}
 
