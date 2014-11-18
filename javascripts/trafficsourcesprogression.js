@@ -31,7 +31,7 @@ $(function() {
 		crosshair : {
 			mode : "x",
 			color: "rgba(170, 0, 0, 0.40)",
-            lineWidth: 4
+            lineWidth: 3
 		},
 		legend : {
 			position : "nw"
