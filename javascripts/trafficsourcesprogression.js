@@ -72,7 +72,7 @@ $(function() {
 			if (i == 0){
 				legendData = series.data[j][1];
 			} else {
-				legendData = series.data[j][1] - dataset[i-1].data[j][1];
+				legendData = series.data[j-1][1] - series.data[j][1];
 			}
 			console.log(series.label)
 			legends.eq(i).text(series.label.replace(/=.*/, "= " + legendData.toFixed(0)));
