@@ -64,15 +64,15 @@ $(function() {
 
 			// Find the nearest points, x-wise
 
-			for (j = 1; j <= series.data.length; ++j) {
+			for (j = 0; j < series.data.length; ++j) {
 				if (series.data[j][0] > pos.x) {
 					break;
 				}
 			}
-			if (i == series.data.length){
+			if (i == dataset.length-2){
 				legendData = series.data[j][1];
 			} else {
-				legendData = series.data[j][1] - series.data[j+1][1];
+				legendData = series.data[j][1] - dataset.[i+1].data[j][1];
 			}
 			console.log(j+" : "+series.data[j])
 			legends.eq(i).text(series.label.replace(/=.*/, "= " + series.data[j][1].toFixed(0)));
